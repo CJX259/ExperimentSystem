@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { connect, IRouteComponentProps, Redirect } from 'umi';
 import { UserModelState } from '@/models/user';
-import { getClassByCourseId } from '@/services/index';
+import { getClassByCourseId } from '@/services/class';
 import ClassCard from '@/components/ClassCard';
 import { classData } from '@/type/index';
 import styles from './index.less';

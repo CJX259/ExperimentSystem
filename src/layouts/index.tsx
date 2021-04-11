@@ -10,7 +10,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 import styles from './index.less';
 import { UserModelState } from '@/models/user'
-import { getByCoursesTeacher } from '@/services';
+import { getByCoursesTeacher } from '@/services/course';
 // 还要包含课程等数据
 interface allStateProps {
   user: UserModelState

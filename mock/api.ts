@@ -91,7 +91,7 @@ export default {
         },
         msg: 'OK'
       })
-    }else{
+    } else {
       res.send({
         success: true, data: {
           classes: [
@@ -123,18 +123,17 @@ export default {
 
   // 通过课程id，班级id和老师id，拿到对应的实验报告名称和id
   'GET /api/experiment/getexperiments': (req: any, res: any) => {
-    console.log(req.query);
     if (Math.random() > 0.5) {
       res.send({
         success: true, data: {
           // count是班级人数（即实验报告需要提交的人数）
           count: 60,
           experiments: [
-            { name: '数据库的嵌套查询', id: '1', deadline: '2021-4-10', submitted: 60 },
-            { name: '数据库的建立和维护', id: '2', deadline: '2021-4-20', submitted: 54 },
-            { name: '简单查询和连接查询', id: '3', deadline: '2021-4-30', submitted: 44 },
-            { name: '数据库的建立和维护', id: '4', deadline: '2021-5-1', submitted: 34 },
-            { name: '简单查询和连接查询', id: '5', deadline: '2021-5-10', submitted: 24 },
+            { uid: "1-2-1", name: '数据库的嵌套查询', id: '1', deadline: '2021-04-10', submitted: 60 },
+            { uid: "1-2-1", name: '数据库的建立和维护', id: '2', deadline: '2021-04-20', submitted: 54 },
+            { uid: "1-2-1", name: '简单查询和连接查询', id: '3', deadline: '2021-04-30', submitted: 44 },
+            { uid: "1-2-1", name: '数据库的建立和维护', id: '4', deadline: '2021-05-1', submitted: 34 },
+            { uid: "1-2-1", name: '简单查询和连接查询', id: '5', deadline: '2021-05-10', submitted: 24 },
           ]
         },
         msg: "OK"
@@ -144,12 +143,85 @@ export default {
         success: true, data: {
           count: 60,
           experiments: [
-            { name: '用例图设计', id: '1', deadline: '2021-4-11', submitted: 44 },
-            { name: '类图设计', id: '2', deadline: '2021-4-17', submitted: 24 },
-            { name: '系统建模与实现', id: '3', deadline: '2021-5-1', submitted: 2 },
+            { uid: "1-1-1", name: '用例图设计', id: '1', deadline: '2021-04-11', submitted: 44 },
+            { uid: "1-1-1", name: '类图设计', id: '2', deadline: '2021-04-17', submitted: 24 },
+            { uid: "1-1-1", name: '系统建模与实现', id: '3', deadline: '2021-05-1', submitted: 2 },
           ]
         },
         msg: "OK"
+      })
+    }
+  },
+  // 通过uid和实验报告id来删除实验报告
+  'POST /api/experiment/delexperiment': (req: any, res: any) => {
+    var uid = req.query.uid;
+    var id = req.query.id;
+    if (uid && id) {
+      res.send({
+        success: true, data: {}, msg: 'ok'
+      });
+    } else {
+      res.send({
+        success: false, data: {}, msg: '缺少参数'
+      })
+    }
+  },
+
+  //通过name，deadline，uid添加实验报告
+  'POST /api/experiment/addexperiment': (req: any, res: any) => {
+    if (Math.random() > 0.5) {
+      var name = req.query.name;
+      var deadline = req.query.deadline;
+      var uid = req.query.uid;
+      res.send({
+        success: true,
+        data: {
+          experiments: [
+            {
+              uid, 
+              name,
+              id: '1' + new Date().toLocaleString(),
+              deadline,
+              submitted: 0
+            }
+          ]
+        },
+        msg: "添加成功"
+      });
+    } else {
+      res.send({
+        success: false,
+        data: {},
+        msg: "添加失败"
+      })
+    }
+  },
+
+  //通过uid+id，修改实验报告
+  'POST /api/experiment/updateexperiment': (req: any, res: any) => {
+    if (Math.random() > 0.7) {
+      var name = req.query.name;
+      var deadline = req.query.deadline;
+      var uid = req.query.uid;
+      var id = req.query.id;
+      res.send({
+        success: true, 
+        data: {
+          experiments: [
+            {
+              name,
+              uid,
+              id,
+              deadline,
+              submitted: 0  //提交情况要后台重新拿一次
+            }
+          ]
+        },
+        msg: '修改成功'
+      })
+    } else {
+      res.send({
+        success: false, data: {}, msg: "修改失败"
       })
     }
   }

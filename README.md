@@ -1,15 +1,28 @@
-# umi project
+## 实验报告管理系统
 
-## Getting Started
 
-Install dependencies,
 
-```bash
-$ yarn
-```
+### 路由安全方面：
 
-Start the dev server,
+前端通过cookie存储用户登录信息。
 
-```bash
-$ yarn start
-```
+若无cookie，无法直接进入主页面，会直接跳到/login页面。
+
+若cookie时间已过，或者cookie被篡改，返回cookie认证错误，跳到/login页面。
+
+切换路由中的参数通过state传递，url无法查看，保密性好。
+
+通过直接输入url进入缺少参数的页面，跳回到/login页面。
+
+
+
+### 用户体验方面：
+
+每次进入主页面，发送一次cookie确认登录状态请求，实现通过cookie拿到用户登录信息。
+
+点击路由中的参数通过路由的state传递，即使刷新页面也能保留上次数据，不必重新筛选。
+
+
+
+
+

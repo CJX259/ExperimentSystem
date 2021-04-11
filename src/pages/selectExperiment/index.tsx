@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { IRouteComponentProps, Redirect, connect } from 'umi';
 import { UserModelState } from '@/models/user';
-import { getExperiment } from '@/services/index';
-import { Table, Tag, Space, Button, Popconfirm } from 'antd';
+import { getExperiment, delExperiment } from '@/services/experiment';
+import { Table, Tag, Space, Button, Popconfirm, Modal } from 'antd';
 import { experiment } from '@/type/index';
-
+import AddExperiment from '@/components/addExperiment';
+import UpdateExperiment from '@/components/updateExperiment';
 function SelectExperiment({ user, location }: IRouteComponentProps) {
   var state = location.state;
   var courseId = state.courseId;
@@ -12,8 +13,12 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
   if (!courseId || !classId) {
     return <Redirect to="/"></Redirect>
   }
+  const [addVisible, setAddVisible] = useState(false);
+  const [uid, setUid] = useState("");
+  const [updateVisible, setUpdateVisible] = useState(false);
+  const [updateExperiment, setUpdateExperiment] = useState({} as experiment);
   const [experiments, setExperiments] = useState([]);
-  const [stuCount, setStuCount] = useState(0)
+  const [stuCount, setStuCount] = useState(0);
   useEffect(() => {
     getExperiment(courseId, classId, user.tid).then(data => {
       // 对数据进行加工一下
@@ -23,6 +28,7 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
         return item;
       })
       setExperiments(arr);
+      setUid(arr[0].uid);
       setStuCount(data.count);
     })
   }, [state])
@@ -55,10 +61,10 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
     {
       title: '操作',
       key: 'action',
-      render: (_: string, record: any) => (
+      render: (_: string, record: experiment) => (
         <Space size="small">
           <Button size="small" style={{ fontSize: '12px' }}>查看</Button>
-          <Button size="small" type="primary" style={{ fontSize: '12px' }}>修改</Button>
+          <Button size="small" type="primary" style={{ fontSize: '12px' }} onClick={() => clickUpdate(record)}>修改</Button>
           <Popconfirm
             title="确认删除吗"
             onConfirm={() => deleteExperiment(record)}
@@ -67,26 +73,85 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
           >
             <Button size="small" type="primary" danger style={{ fontSize: '12px' }}>删除</Button>
           </Popconfirm>
-
         </Space>
       ),
     },
   ];
-  const deleteExperiment = ({ uid, id }: experiment) => {
+  const deleteExperiment = async ({ uid, id }: experiment): Promise<void> => {
     // 发送请求，成功就消除前端数据
-    
-    var arr = experiments.filter((item: experiment) => {
-      return !(item.id === id && item.uid === uid);
-    })
-    setExperiments(arr);
+    const success = await delExperiment(uid, id);
+    if (success) {
+      var arr = experiments.filter((item: experiment) => {
+        return !(item.id === id && item.uid === uid);
+      })
+      setExperiments(arr);
+    }
   }
-
+  // 更新前端的实验列表
+  function addExperimentInWeb(experiment: never): void {
+    setExperiments([...experiments, experiment]);
+  }
+  function clickAdd(): void {
+    setAddVisible(true);
+  }
+  function cancelAdd(): void {
+    setAddVisible(false);
+  }
+  function cancelUpdate(): void {
+    setUpdateVisible(false);
+  }
+  function clickUpdate(experiment: experiment): void {
+    setUpdateExperiment(experiment);
+    setUpdateVisible(true);
+  }
+  // 修改前端的实验列表
+  function updateExperimentInWeb(newExperiment:experiment):void{
+    // 找到id相同的实验，替换成新的
+    var arr = experiments.map((item:experiment) => {
+      if(item.id === newExperiment.id){
+        return newExperiment;
+      }else{
+        return item;
+      }
+    })
+    setExperiments(arr as any);
+    // 重置updateExperiment
+    setUpdateExperiment({}as experiment);
+  }
   return (
     <div>
       <Table pagination={false} rowKey="id" columns={columns} dataSource={experiments} />
+      <Button style={{ left: "50%", transform: 'translateX(-50%)', marginTop: "10px" }}
+        onClick={() => clickAdd()}
+      >添加实验报告</Button>
+      <Modal
+        title="添加实验报告"
+        visible={addVisible}
+        onCancel={cancelAdd}
+        footer={null}
+      >
+        <AddExperiment
+          experiments={experiments}
+          uid={uid}
+          updateExperiments={addExperimentInWeb}
+          hidden={(flag: boolean) => setAddVisible(flag)} ></AddExperiment>
+      </Modal>
+      <Modal
+        title="修改实验报告"
+        visible={updateVisible}
+        onCancel={cancelUpdate}
+        footer={null}
+      >
+        <UpdateExperiment
+          data={updateExperiment}
+          experiments={experiments}
+          updateExperiments={updateExperimentInWeb}
+          hidden={(flag: boolean) => setUpdateVisible(flag)} ></UpdateExperiment>
+      </Modal>
     </div>
   )
 }
+
 function mapStateToProps({ user }: { user: UserModelState }) {
   return {
     user

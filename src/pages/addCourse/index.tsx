@@ -2,7 +2,7 @@ import { Form, Input, Button, Checkbox, Row, Col, message } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { ReactNode, useEffect, useState } from 'react';
 import { request } from 'umi';
-import { getAllClass } from '@/services';
+import { getAllClass } from '@/services/class';
 const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 6 },

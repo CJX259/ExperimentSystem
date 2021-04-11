@@ -14,5 +14,5 @@ export interface experiment {
   submitted: number
   stuCount?: number
   finish?: boolean
-  uid?: string
+  uid: string
 }
