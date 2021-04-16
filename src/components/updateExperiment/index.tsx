@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import { Form, Input, Button, DatePicker, message } from 'antd';
 import { updateExperiment } from '@/services/experiment';
 import { experiment } from '@/type';
@@ -11,13 +11,22 @@ const layout = {
 const tailLayout = {
   wrapperCol: { offset: 6, span: 6 },
 };
-function UpdateExperiment({ data, hidden, updateExperiments, experiments }: { data: experiment, experiments: Array<experiment>, hidden: Function, updateExperiments: Function }) {
-  
+function UpdateExperiment({
+  data,
+  hidden,
+  updateExperiments,
+  experiments,
+}: {
+  data: experiment;
+  experiments: Array<experiment>;
+  hidden: Function;
+  updateExperiments: Function;
+}) {
   var finish = async (values: any) => {
     var deadline = values.deadline.format('YYYY-MM-DD');
     if (data.deadline == deadline && data.name == values.name) {
       // 没有修改
-      message.warning("没有改动");
+      message.warning('没有改动');
       hidden(false);
       return;
     }
@@ -27,18 +36,26 @@ function UpdateExperiment({ data, hidden, updateExperiments, experiments }: { da
         return;
       }
     }
-    const result = await updateExperiment(data.uid, data.id, values.name, deadline);
+    const result = await updateExperiment(
+      data.uid,
+      data.id,
+      values.name,
+      deadline,
+    );
     if (result.success) {
       hidden(false);
       //更新前端视图
       updateExperiments(result.data.experiments[0]);
     }
-  }
+  };
   const [form] = Form.useForm();
-  form.setFieldsValue({
-    name: data.name,
-    deadline: moment(data.deadline, 'YYYY-MM-DD')
-  });
+  // 副作用函数，在渲染完后再执行
+  useEffect(() => {
+    form.setFieldsValue({
+      name: data.name,
+      deadline: moment(data.deadline, 'YYYY-MM-DD'),
+    });
+  }, [data]);
 
   return (
     <div>
@@ -70,6 +87,6 @@ function UpdateExperiment({ data, hidden, updateExperiments, experiments }: { da
         </Form.Item>
       </Form>
     </div>
-  )
+  );
 }
 export default UpdateExperiment;

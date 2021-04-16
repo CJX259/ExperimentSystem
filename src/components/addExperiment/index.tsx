@@ -1,5 +1,5 @@
-import React from 'react'
-import { Form, Input, Button, DatePicker,message } from 'antd';
+import React from 'react';
+import { Form, Input, Button, DatePicker, message } from 'antd';
 import { addExperiment } from '@/services/experiment';
 import { experiment } from '@/type';
 
@@ -10,10 +10,20 @@ const layout = {
 const tailLayout = {
   wrapperCol: { offset: 6, span: 6 },
 };
-function AddExperimentComponent({ hidden, updateExperiments, experiments, uid }: {experiments:Array<experiment>, hidden: Function, updateExperiments: Function, uid: string }) {
+function AddExperimentComponent({
+  hidden,
+  updateExperiments,
+  experiments,
+  uid,
+}: {
+  experiments: Array<experiment>;
+  hidden: Function;
+  updateExperiments: Function;
+  uid: string;
+}) {
   var finish = async (values: any) => {
-    for(var i =0 ;i < experiments.length; i++){
-      if(experiments[i].name === values.name){
+    for (var i = 0; i < experiments.length; i++) {
+      if (experiments[i].name === values.name) {
         message.warning('名字重复，请重新输入');
         return;
       }
@@ -26,7 +36,7 @@ function AddExperimentComponent({ hidden, updateExperiments, experiments, uid }:
       //更新前端视图
       updateExperiments(data.data.experiments[0]);
     }
-  }
+  };
   const [form] = Form.useForm();
 
   return (
@@ -48,9 +58,9 @@ function AddExperimentComponent({ hidden, updateExperiments, experiments, uid }:
         <Form.Item
           name="deadline"
           label="截止日期"
-          rules={[{ required: true, message: '必须截止日期！' }]}
+          rules={[{ required: true, message: '必须选择截止日期！' }]}
         >
-          <DatePicker />
+          <DatePicker placeholder="请选择截止日期" />
         </Form.Item>
         <Form.Item {...tailLayout}>
           <Button htmlType="submit" className="addExperiment-form-button">
@@ -59,6 +69,6 @@ function AddExperimentComponent({ hidden, updateExperiments, experiments, uid }:
         </Form.Item>
       </Form>
     </div>
-  )
+  );
 }
 export default AddExperimentComponent;

@@ -1,17 +1,16 @@
-import {message } from 'antd';
-import {request} from 'umi';
+import { message } from 'antd';
+import { request } from 'umi';
 export async function getAllClass() {
   const data = await request('/api/class/getallclass', {
     method: 'GET',
-    skipErrorHandler: true
-  })
+    skipErrorHandler: true,
+  });
   if (data.success) {
     return data.data.classes;
   } else {
-    message.error(data.msg);
+    message.error(data.msg || '获取班级信息错误');
     return [];
   }
-
 }
 export async function getClassByCourseId(courseId: string, tid: string) {
   const data = await request('/api/class/getclassbycourseid', {
@@ -19,13 +18,13 @@ export async function getClassByCourseId(courseId: string, tid: string) {
     skipErrorHandler: true,
     params: {
       courseId,
-      tid
-    }
-  })
+      tid,
+    },
+  });
   if (data.success) {
     return data.data.classes;
   } else {
-    message.error(data.msg);
+    message.error(data.msg || '获取班级信息错误');
     return [];
   }
 }

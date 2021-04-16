@@ -1,5 +1,5 @@
 import { getCookie } from '../src/utils';
-
+import { getStuData } from './index';
 export default {
   'POST /api/teacher/login': (req: any, res: any) => {
     var name = req.query.name;
@@ -7,10 +7,13 @@ export default {
     if (name == '蔡云鹭' && password == '123123') {
       // 设置登录成功cookie
       // 注意path，否则前端无法获取
-      res.setHeader('Set-Cookie', 'userToken=asdasdasdajqwe1213; max-age=100000; path=/');
-      res.send({ success: true, data: { name, tid: "1815200059" }, msg: "ok" });
+      res.setHeader(
+        'Set-Cookie',
+        'userToken=asdasdasdajqwe1213; max-age=100000; path=/',
+      );
+      res.send({ success: true, data: { name, tid: '1815200059' }, msg: 'ok' });
     } else {
-      res.send({ success: false, data: {}, msg: "账号或密码错误" })
+      res.send({ success: false, data: {}, msg: '账号或密码错误' });
     }
   },
   // 后端解析cookie，如果有内容，则返回对应用户信息
@@ -21,9 +24,13 @@ export default {
     var cookie = req.headers.cookie || 'nothing';
     var needCookie = getCookie('userToken', cookie);
     if (needCookie != null) {
-      res.send({ success: true, data: { name: "蔡云鹭", tid: "1815200059" }, msg: "ok" });
+      res.send({
+        success: true,
+        data: { name: '蔡云鹭', tid: '1815200059' },
+        msg: 'ok',
+      });
     } else {
-      res.send({ success: false, data: {}, msg: "cookie认证错误" });
+      res.send({ success: false, data: {}, msg: 'cookie认证错误' });
     }
   },
   // 拿到所有的class，真正来说不太科学，应该是老师同属学院的所有班级（但项目规模较小，若需要往后拓展，则需修改数据库结构）
@@ -40,11 +47,11 @@ export default {
           { name: '基地186', id: '6' },
           { name: '精算187', id: '7' },
           { name: '金融188', id: '8' },
-          { name: '金融189', id: '9' }
-        ]
+          { name: '金融189', id: '9' },
+        ],
       },
-      msg: "OK"
-    })
+      msg: 'OK',
+    });
     // res.send({success: false, data: '', msg:"班级查询失败"});
   },
   // 通过cookie拿到老师信息，返回老师所教的课程
@@ -59,16 +66,16 @@ export default {
           { name: '软件工程', id: '4' },
           { name: '操作系统', id: '5' },
           { name: '计算机网络', id: '6' },
-        ]
+        ],
       },
-      msg: "OK"
-    })
+      msg: 'OK',
+    });
     // res.send({success: false, data: '', msg:"课程查询失败"});
   },
   'POST /api/course/addcourse': (req: any, res: any) => {
     // 通过cookie，拿到老师id
     // 然后通过post上来的课程id和课程名和实验报告，生成各项数据
-    res.send({ success: true, data: '', msg: "添加成功" });
+    res.send({ success: true, data: '', msg: '添加成功' });
     // res.send({success: false, data: '', msg:"添加失败"});
   },
 
@@ -76,7 +83,8 @@ export default {
   'GET /api/class/getclassbycourseid': (req: any, res: any) => {
     if (Math.random() > 0.5) {
       res.send({
-        success: true, data: {
+        success: true,
+        data: {
           classes: [
             { name: '信计181', id: '1' },
             { name: '信计182', id: '2' },
@@ -86,14 +94,15 @@ export default {
             { name: '基地186', id: '6' },
             { name: '精算187', id: '7' },
             { name: '金融188', id: '8' },
-            { name: '金融189', id: '9' }
-          ]
+            { name: '金融189', id: '9' },
+          ],
         },
-        msg: 'OK'
-      })
+        msg: 'OK',
+      });
     } else {
       res.send({
-        success: true, data: {
+        success: true,
+        data: {
           classes: [
             { name: '信计181', id: '1' },
             { name: '信计182', id: '2' },
@@ -113,43 +122,92 @@ export default {
             { name: '精算187', id: '16' },
             { name: '金融188', id: '17' },
             { name: '金融189', id: '18' },
-          ]
+          ],
         },
-        msg: 'OK'
-      })
+        msg: 'OK',
+      });
     }
-
   },
 
   // 通过课程id，班级id和老师id，拿到对应的实验报告名称和id
   'GET /api/experiment/getexperiments': (req: any, res: any) => {
     if (Math.random() > 0.5) {
       res.send({
-        success: true, data: {
+        success: true,
+        data: {
           // count是班级人数（即实验报告需要提交的人数）
           count: 60,
           experiments: [
-            { uid: "1-2-1", name: '数据库的嵌套查询', id: '1', deadline: '2021-04-10', submitted: 60 },
-            { uid: "1-2-1", name: '数据库的建立和维护', id: '2', deadline: '2021-04-20', submitted: 54 },
-            { uid: "1-2-1", name: '简单查询和连接查询', id: '3', deadline: '2021-04-30', submitted: 44 },
-            { uid: "1-2-1", name: '数据库的建立和维护', id: '4', deadline: '2021-05-1', submitted: 34 },
-            { uid: "1-2-1", name: '简单查询和连接查询', id: '5', deadline: '2021-05-10', submitted: 24 },
-          ]
+            {
+              uid: '1-2-1',
+              name: '数据库的嵌套查询',
+              id: '1',
+              deadline: '2021-04-10',
+              submitted: 60,
+            },
+            {
+              uid: '1-2-1',
+              name: '数据库的建立和维护',
+              id: '2',
+              deadline: '2021-04-20',
+              submitted: 54,
+            },
+            {
+              uid: '1-2-1',
+              name: '简单查询和连接查询',
+              id: '3',
+              deadline: '2021-04-30',
+              submitted: 44,
+            },
+            {
+              uid: '1-2-1',
+              name: '数据库的建立和维护',
+              id: '4',
+              deadline: '2021-05-1',
+              submitted: 34,
+            },
+            {
+              uid: '1-2-1',
+              name: '简单查询和连接查询',
+              id: '5',
+              deadline: '2021-05-10',
+              submitted: 24,
+            },
+          ],
         },
-        msg: "OK"
-      })
+        msg: 'OK',
+      });
     } else {
       res.send({
-        success: true, data: {
+        success: true,
+        data: {
           count: 60,
           experiments: [
-            { uid: "1-1-1", name: '用例图设计', id: '1', deadline: '2021-04-11', submitted: 44 },
-            { uid: "1-1-1", name: '类图设计', id: '2', deadline: '2021-04-17', submitted: 24 },
-            { uid: "1-1-1", name: '系统建模与实现', id: '3', deadline: '2021-05-1', submitted: 2 },
-          ]
+            {
+              uid: '1-1-1',
+              name: '用例图设计',
+              id: '1',
+              deadline: '2021-04-11',
+              submitted: 44,
+            },
+            {
+              uid: '1-1-1',
+              name: '类图设计',
+              id: '2',
+              deadline: '2021-04-17',
+              submitted: 24,
+            },
+            {
+              uid: '1-1-1',
+              name: '系统建模与实现',
+              id: '3',
+              deadline: '2021-05-1',
+              submitted: 2,
+            },
+          ],
         },
-        msg: "OK"
-      })
+        msg: 'OK',
+      });
     }
   },
   // 通过uid和实验报告id来删除实验报告
@@ -158,12 +216,16 @@ export default {
     var id = req.query.id;
     if (uid && id) {
       res.send({
-        success: true, data: {}, msg: 'ok'
+        success: true,
+        data: {},
+        msg: 'ok',
       });
     } else {
       res.send({
-        success: false, data: {}, msg: '缺少参数'
-      })
+        success: false,
+        data: {},
+        msg: '缺少参数',
+      });
     }
   },
 
@@ -178,22 +240,22 @@ export default {
         data: {
           experiments: [
             {
-              uid, 
+              uid,
               name,
               id: '1' + new Date().toLocaleString(),
               deadline,
-              submitted: 0
-            }
-          ]
+              submitted: 0,
+            },
+          ],
         },
-        msg: "添加成功"
+        msg: '添加成功',
       });
     } else {
       res.send({
         success: false,
         data: {},
-        msg: "添加失败"
-      })
+        msg: '添加失败',
+      });
     }
   },
 
@@ -205,7 +267,7 @@ export default {
       var uid = req.query.uid;
       var id = req.query.id;
       res.send({
-        success: true, 
+        success: true,
         data: {
           experiments: [
             {
@@ -213,18 +275,46 @@ export default {
               uid,
               id,
               deadline,
-              submitted: 0  //提交情况要后台重新拿一次
-            }
-          ]
+              submitted: 0, //提交情况要后台重新拿一次
+            },
+          ],
         },
-        msg: '修改成功'
-      })
+        msg: '修改成功',
+      });
     } else {
       res.send({
-        success: false, data: {}, msg: "修改失败"
-      })
+        success: false,
+        data: {},
+        msg: '修改失败',
+      });
     }
-  }
-
-
-}
+  },
+  // 分页通过classId，exp信息拿到学生数据(join操作，再拿到finish表中学生的提交情况)
+  'GET /api/experiment/getstudatabypage': (req: any, res: any) => {
+    var experiment = req.query.experiment;
+    var classId = req.query.classId;
+    // 转化为数字
+    var current = +req.query.current || 1;
+    var pageSize = +req.query.pageSize || 10;
+    if (!classId || !experiment) {
+      res.send({
+        success: false,
+        data: {},
+        msg: '获取学生信息错误',
+      });
+    }
+    var stus = students.slice(
+      (current - 1) * pageSize,
+      (current - 1) * pageSize + pageSize,
+    );
+    res.send({
+      success: true,
+      data: {
+        count: 50,
+        students: stus,
+      },
+      msg: 'OK',
+    });
+  },
+};
+const students = getStuData();
