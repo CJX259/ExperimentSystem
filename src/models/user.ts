@@ -5,6 +5,8 @@ import { delCookie } from '@/utils';
 export interface UserModelState {
   name: string;
   tid: string;
+  collegeId: string;
+  collegeName: string;
 }
 // model配置的接口样式
 export interface UserModelType {
@@ -23,38 +25,52 @@ const UserModel: UserModelType = {
   state: {
     name: '',
     tid: '',
+    collegeId: '',
+    collegeName: '',
   },
   // 副作用函数，内部由react-saga实现
+  // 无法抛出错误到页面接收，只能在这里处理
   effects: {
     *login(action, { call, put }) {
-      let data = yield call(
-        [this, requestLogin],
-        action.payload.name,
-        action.payload.password,
-      );
-      if (data.success) {
-        message.success('登录成功', 1);
-        yield put({ type: 'setUser', payload: data.data });
-      } else {
-        // 登录失败的情况
-        message.error(data.msg);
+      try {
+        let data = yield call(
+          [this, requestLogin],
+          action.payload.name,
+          action.payload.password,
+        );
+        if (data.success) {
+          message.success('登录成功', 1);
+          yield put({ type: 'setUser', payload: data.data });
+        } else {
+          // 登录失败的情况
+          // message.error(data.msg);
+          throw new Error(data.msg);
+        }
+      } catch (err) {
+        // 整个http错误和登录失败的错误，抛给页面处理
+        message.error(err.message);
       }
     },
     *loginbycookie(action, { call, put }) {
-      let data = yield call([this, requestLoginByCookie]);
-      if (data.success) {
-        yield put({ type: 'setUser', payload: data.data });
-      } else {
-        message.error(data.msg, 1);
-        yield put({ type: 'setUser', payload: { name: '', tid: '' } });
-        // 删除原来的cookie
-        delCookie('userToken');
+      try {
+        let data = yield call([this, requestLoginByCookie]);
+        if (data.success) {
+          yield put({ type: 'setUser', payload: data.data });
+        } else {
+          yield put({ type: 'setUser', payload: { name: '', tid: '' } });
+          // 删除原来的cookie
+          delCookie('userToken');
+          throw new Error(data.msg);
+        }
+      } catch (err) {
+        // 抛出错误给主页面捕获
+        message.error(err.message);
         history.push('/login');
       }
     },
     *logout(action, { call, put }) {
       message.success('登出成功', 1);
-      yield put({ type: 'setUser', payload: { name: '', tid: '' } });
+      yield put({ type: 'setUser', payload: {} });
       // 删除原来的cookie
       delCookie('userToken');
       history.push('/login');
@@ -66,15 +82,23 @@ const UserModel: UserModelType = {
     setUser(state: UserModelState, action): UserModelState {
       var name = action.payload.name ? action.payload.name : state.name;
       var tid = action.payload.tid ? action.payload.tid : state.tid;
+      var collegeId = action.payload
+        ? action.payload.collegeId
+        : state.collegeId;
+      var collegeName = action.payload
+        ? action.payload.collegeName
+        : state.collegeName;
       return {
         ...state,
         name,
         tid: tid,
+        collegeId,
+        collegeName,
       };
     },
   },
 };
-// 模拟等待请求
+
 async function requestLogin(name: string, password: string) {
   const data = await request('/api/teacher/login', {
     method: 'post',
@@ -87,15 +111,11 @@ async function requestLogin(name: string, password: string) {
   return data;
 }
 async function requestLoginByCookie() {
-  try {
-    const data = await request('/api/teacher/loginbycookie', {
-      method: 'get',
-      skipErrorHandler: true,
-    });
-    return data;
-  } catch (err) {
-    return { success: false, data: {}, msg: err };
-  }
+  const data = await request('/api/teacher/loginbycookie', {
+    method: 'get',
+    skipErrorHandler: true,
+  });
+  return data;
 }
 
 export default UserModel;

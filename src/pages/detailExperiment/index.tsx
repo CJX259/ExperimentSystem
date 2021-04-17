@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IRouteComponentProps } from 'umi';
 import { getStuByClassByPage } from '../../services/student';
-import { Table, Tag, Space, Button } from 'antd';
+import { Table, Tag, Space, Button, message } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { student } from '@/type/index';
 const columns = [
@@ -51,7 +51,6 @@ const columns = [
     title: '提交次数',
     dataIndex: 'count',
     key: 'count',
-    sorter: true,
   },
   {
     title: '操作',
@@ -108,9 +107,11 @@ const columns = [
 export default function DetailExperiment({ location }: IRouteComponentProps) {
   let state = location.state;
   // 分页变量
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({ pageSize: 6, current: 1, total: 0 });
   const [students, setStudents] = useState({ count: 0, students: [] });
   useEffect(() => {
+    setLoading(true);
     getStuByClassByPage(
       state.classId,
       state.experiment,
@@ -119,41 +120,44 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
     )
       .then((data) => {
         setStudents(data);
+        setLoading(false);
       })
       .catch((err) => {
-        console.log('getStuError: ' + err);
+        message.error(err.message);
+        setLoading(false);
       });
   }, [state]);
 
   // 当table状态改变时触发，传值是此表格下一个数据，以及表格中筛选和排序的信息
   // （翻页，点击筛选条件都会触发）
   const handleTableChange = (page: any, filters: any, sorter: any) => {
-    // fetch({
-    console.log(page, filters, sorter);
-    //   sortField: sorter.field,
-    //   sortOrder: sorter.order,
-    //   page,
-    //   ...filters,
-    // });
+    // 如果filter信息变了，就重置页面到第一页(antd的table自带的page组件帮我完成了~)
+    setLoading(true);
+    getStuByClassByPage(
+      state.classId,
+      state.experiment,
+      page.current,
+      page.pageSize,
+      filters,
+    )
+      .then((data) => {
+        setPage({ ...page, total: data.count });
+        setStudents(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        message.error(err.message);
+        setLoading(false);
+      });
   };
 
-  const fetch = (params = {}) => {
-    // request({
-    //   url: 'https://randomuser.me/api',
-    //   method: 'get',
-    //   type: 'json',
-    //   data: getRandomuserParams(params),
-    // }).then(data => {
-    //   setPage({...params.pagination});
-    // });
-  };
   return (
     <div>
       <Table
         rowKey="id"
         pagination={{ ...page, total: students.count }}
         columns={columns}
-        // loading={true}
+        loading={loading}
         onChange={handleTableChange}
         dataSource={students.students}
       />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IRouteComponentProps, Redirect, connect, Link } from 'umi';
 import { UserModelState } from '@/models/user';
 import { getExperiment, delExperiment } from '@/services/experiment';
-import { Table, Tag, Space, Button, Popconfirm, Modal } from 'antd';
+import { Table, Tag, Space, Button, Popconfirm, Modal, message } from 'antd';
 import { experiment } from '@/type/index';
 import AddExperiment from '@/components/addExperiment';
 import UpdateExperiment from '@/components/updateExperiment';
@@ -20,17 +20,21 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
   const [experiments, setExperiments] = useState([]);
   const [stuCount, setStuCount] = useState(0);
   useEffect(() => {
-    getExperiment(courseId, classId, user.tid).then((data) => {
-      // 对数据进行加工一下
-      var arr = data.experiments;
-      arr = arr.map((item: experiment) => {
-        item.finish = item.submitted == data.count;
-        return item;
+    getExperiment(courseId, classId, user.tid)
+      .then((data) => {
+        // 对数据进行加工一下
+        var arr = data.experiments;
+        arr = arr.map((item: experiment) => {
+          item.finish = item.submitted == data.count;
+          return item;
+        });
+        setExperiments(arr);
+        setUid(arr[0].uid);
+        setStuCount(data.count);
+      })
+      .catch((err) => {
+        message.error(err.message);
       });
-      setExperiments(arr);
-      setUid(arr[0].uid);
-      setStuCount(data.count);
-    });
   }, [state]);
 
   const columns = [

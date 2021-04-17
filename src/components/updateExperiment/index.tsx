@@ -36,16 +36,20 @@ function UpdateExperiment({
         return;
       }
     }
-    const result = await updateExperiment(
-      data.uid,
-      data.id,
-      values.name,
-      deadline,
-    );
-    if (result.success) {
-      hidden(false);
-      //更新前端视图
-      updateExperiments(result.data.experiments[0]);
+    try {
+      const result = await updateExperiment(
+        data.uid,
+        data.id,
+        values.name,
+        deadline,
+      );
+      if (result.success) {
+        hidden(false);
+        //更新前端视图
+        updateExperiments(result.data.experiments[0]);
+      }
+    } catch (err) {
+      message.error(err.message);
     }
   };
   const [form] = Form.useForm();

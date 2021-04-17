@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { connect, IRouteComponentProps, Redirect } from 'umi';
 import { UserModelState } from '@/models/user';
 import { getClassByCourseId } from '@/services/class';
 import ClassCard from '@/components/ClassCard';
+import { message } from 'antd';
 import { classData } from '@/type/index';
 import styles from './index.less';
 function SelectCourse({ location, user }: IRouteComponentProps) {
@@ -11,23 +12,27 @@ function SelectCourse({ location, user }: IRouteComponentProps) {
   const [classes, setClasses] = useState([]);
   // 请求班级
   useEffect(() => {
-    getClassByCourseId(courseId, user.tid).then(data => {
-      setClasses(data);
-    });
-  }, [courseId])
+    getClassByCourseId(courseId, user.tid)
+      .then((data) => {
+        setClasses(data);
+      })
+      .catch((err) => {
+        message.error(err.message || '请求班级错误');
+      });
+  }, [courseId]);
   return (
     <div className={styles['selectClass-wrapper']}>
-      {
-        classes.map((item: classData) => {
-          return <ClassCard key={item.id} name={item.name} id={item.id}></ClassCard>
-        })
-      }
+      {classes.map((item: classData) => {
+        return (
+          <ClassCard key={item.id} name={item.name} id={item.id}></ClassCard>
+        );
+      })}
     </div>
-  )
+  );
 }
-function mapStateToProps({ user }: { user: UserModelState }){
+function mapStateToProps({ user }: { user: UserModelState }) {
   return {
-    user
-  }
+    user,
+  };
 }
 export default connect(mapStateToProps)(SelectCourse);

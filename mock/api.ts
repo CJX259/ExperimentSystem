@@ -11,7 +11,16 @@ export default {
         'Set-Cookie',
         'userToken=asdasdasdajqwe1213; max-age=100000; path=/',
       );
-      res.send({ success: true, data: { name, tid: '1815200059' }, msg: 'ok' });
+      res.send({
+        success: true,
+        data: {
+          name,
+          tid: '1815200059',
+          collegeId: '1',
+          collegeName: '数学与信息科学学院',
+        },
+        msg: 'ok',
+      });
     } else {
       res.send({ success: false, data: {}, msg: '账号或密码错误' });
     }
@@ -26,7 +35,12 @@ export default {
     if (needCookie != null) {
       res.send({
         success: true,
-        data: { name: '蔡云鹭', tid: '1815200059' },
+        data: {
+          name: '蔡云鹭',
+          tid: '1815200059',
+          collegeId: '1',
+          collegeName: '数学与信息科学学院',
+        },
         msg: 'ok',
       });
     } else {
@@ -290,10 +304,16 @@ export default {
     }
   },
   // 分页通过classId，exp信息拿到学生数据(join操作，再拿到finish表中学生的提交情况)
+  // 可以添加参数进行筛选，没有接收到该参数就不对该值进行筛选
+  // grade： “优秀”，“良好”，“及格”， “不及格”，“未评分”（未评分是找出grade为null的）
+  // status：“0”， “1”
+  // com_permit：“0”，“1”
+  // name：暂定
   'GET /api/experiment/getstudatabypage': (req: any, res: any) => {
     var experiment = req.query.experiment;
     var classId = req.query.classId;
     // 转化为数字
+    // res.send({success: false, data: {}, msg:"学生数据获取失败"});
     var current = +req.query.current || 1;
     var pageSize = +req.query.pageSize || 10;
     if (!classId || !experiment) {

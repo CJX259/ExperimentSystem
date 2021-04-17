@@ -46,14 +46,14 @@ const PageLayout: React.FC<PageLayout> = ({
       loginByCookie();
     } catch (err) {
       // 登录信息有误，跳回login页面
-      history.push('/login');
+      message.error(err.message);
     }
     getByCoursesTeacher()
       .then((data) => {
         setCourses(data);
       })
       .catch((err) => {
-        message.error(err);
+        message.error(err.message);
       });
   }, []);
   // 确认登出

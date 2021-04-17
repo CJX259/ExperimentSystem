@@ -29,12 +29,16 @@ function AddExperimentComponent({
       }
     }
     var deadline = values.deadline.format('YYYY-MM-DD');
-    const data = await addExperiment(uid, values.name, deadline);
-    if (data.success) {
-      form.resetFields();
-      hidden(false);
-      //更新前端视图
-      updateExperiments(data.data.experiments[0]);
+    try {
+      const data = await addExperiment(uid, values.name, deadline);
+      if (data.success) {
+        form.resetFields();
+        hidden(false);
+        //更新前端视图
+        updateExperiments(data.data.experiments[0]);
+      }
+    } catch (err) {
+      message.error(err.message);
     }
   };
   const [form] = Form.useForm();

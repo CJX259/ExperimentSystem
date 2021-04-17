@@ -17,45 +17,57 @@ interface classes {
 const AddCourse = () => {
   const [form] = Form.useForm();
   const onFinish = async (values: any) => {
-    const data = await request('/api/course/addcourse', {
-      method: 'POST',
-      params: values,
-      skipErrorHandler: true
-    })
-    if (data.success) {
-      message.success(data.msg);
-      form.resetFields();
-    } else {
-      message.error(data.msg);
+    try {
+      const data = await request('/api/course/addcourse', {
+        method: 'POST',
+        params: values,
+        skipErrorHandler: true,
+      });
+      if (data.success) {
+        message.success(data.msg);
+        form.resetFields();
+      } else {
+        throw new Error(data.msg);
+      }
+    } catch (err) {
+      message.error(err.message);
     }
   };
   const [classes, setClasses] = useState([]);
   useEffect(() => {
-    getAllClass().then(data => {
+    getAllClass().then((data) => {
       setClasses(data);
     });
-  }, [])
+  }, []);
 
   var CheckboxByClasses = classes.map<ReactNode>(function (item: classes) {
-    return <Col span={32} key={item.id}>
-      <Checkbox value={item.id} style={{ lineHeight: '32px' }}>
-        {item.name}
-      </Checkbox>
-    </Col>
+    return (
+      <Col span={32} key={item.id}>
+        <Checkbox value={item.id} style={{ lineHeight: '32px' }}>
+          {item.name}
+        </Checkbox>
+      </Col>
+    );
   });
   const onReset = () => {
     form.resetFields();
   };
   return (
     <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
-      <Form.Item name="name" label="课程名" rules={[{ required: true, message: "请输入课程名" }]} >
+      <Form.Item
+        name="name"
+        label="课程名"
+        rules={[{ required: true, message: '请输入课程名' }]}
+      >
         <Input style={{ width: '90%' }} />
       </Form.Item>
-      <Form.Item name="classes" label="任课班级" rules={[{ required: true, message: "至少选择一个班级" }]}>
+      <Form.Item
+        name="classes"
+        label="任课班级"
+        rules={[{ required: true, message: '至少选择一个班级' }]}
+      >
         <Checkbox.Group>
-          <Row>
-            {CheckboxByClasses}
-          </Row>
+          <Row>{CheckboxByClasses}</Row>
         </Checkbox.Group>
       </Form.Item>
       {/* 动态表单项 */}
@@ -87,7 +99,7 @@ const AddCourse = () => {
                     {
                       required: true,
                       whitespace: true,
-                      message: "请输入实验报告名称，或删除此项",
+                      message: '请输入实验报告名称，或删除此项',
                     },
                   ]}
                   noStyle

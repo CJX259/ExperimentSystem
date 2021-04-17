@@ -1,21 +1,21 @@
 import { connect, history, Redirect } from 'umi';
 import { UserModelState } from '@/models/user';
 import React from 'react';
-import { Form, Input, Button, Spin } from 'antd';
+import { Form, Input, Button, Spin, message } from 'antd';
 import { loadingModelState } from '@/type/index';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styles from './index.less';
 // 默认的props类型，作测试
 const DefaultProps = {
   // ip: "127.0.0.1"
-}
+};
 // 连接redux的user模型的接口定义
 interface UserStateProps {
-  user: UserModelState,
+  user: UserModelState;
 }
 
 interface loadingStateProps {
-  loading: loadingModelState
+  loading: loadingModelState;
 }
 // 连接redux的dispatch的接口定义
 interface UserDispatchProps {
@@ -29,26 +29,29 @@ export type LoginReduxType = ReturnType<typeof mapStateToProps> &
 //函数组件, 并对其props约束
 const Login: React.FC<LoginReduxType> = ({ user, login, loading }) => {
   if (document.cookie.indexOf('userToken') !== -1) {
-    return <Redirect to="/"/>
+    return <Redirect to="/" />;
   }
-  var onFinish = (values: { username: string, password: string }) => {
-    login(values.username, values.password);
-  }
+  var onFinish = (values: { username: string; password: string }) => {
+    try {
+      login(values.username, values.password);
+    } catch (err) {
+      message.error(err.message);
+    }
+  };
   return (
     <Spin spinning={loading.global}>
       <div className={styles.wrapper}>
         <div id={styles.login}>
-          <h1 style={{ textAlign: "center" }}>教师端登录</h1>
-          <Form
-            name="normal_login"
-            className="login-form"
-            onFinish={onFinish}
-          >
+          <h1 style={{ textAlign: 'center' }}>教师端登录</h1>
+          <Form name="normal_login" className="login-form" onFinish={onFinish}>
             <Form.Item
               name="username"
               rules={[{ required: true, message: '必须输入用户名！' }]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="请输入用户名" />
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="请输入用户名"
+              />
             </Form.Item>
             <Form.Item
               name="password"
@@ -63,33 +66,38 @@ const Login: React.FC<LoginReduxType> = ({ user, login, loading }) => {
             <Form.Item className={styles['row-center']}>
               <Button htmlType="submit" className="login-form-button">
                 登录
-            </Button>
+              </Button>
             </Form.Item>
           </Form>
         </div>
       </div>
     </Spin>
-  )
-}
+  );
+};
 // 设置父级默认props
 Login.defaultProps = DefaultProps;
-
 
 function mapDispatchToProps(dispatch: Function): UserDispatchProps {
   return {
     login(name: string, password: string) {
       dispatch({
         type: 'user/login',
-        payload: { name, password }
+        payload: { name, password },
       });
     },
-  }
+  };
 }
 // 第一个参数为state
-function mapStateToProps({ user, loading }: { user: UserModelState, loading: loadingModelState }): UserStateProps & loadingStateProps {
+function mapStateToProps({
+  user,
+  loading,
+}: {
+  user: UserModelState;
+  loading: loadingModelState;
+}): UserStateProps & loadingStateProps {
   return {
     user,
-    loading
-  }
+    loading,
+  };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
