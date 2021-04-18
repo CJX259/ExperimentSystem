@@ -1,11 +1,7 @@
 import { message } from 'antd';
 import { request } from 'umi';
 
-export async function getExperiment(
-  courseId: string,
-  classId: string,
-  tid: string,
-) {
+export async function getExperiment(courseId: string, classId: string) {
   try {
     const data = await request('/api/experiment/getexperiments', {
       method: 'GET',
@@ -13,7 +9,6 @@ export async function getExperiment(
       params: {
         courseId,
         classId,
-        tid,
       },
     });
     if (data.success) {
@@ -103,6 +98,26 @@ export async function updateExperiment(
     } else {
       // message.error(data.msg || '修改实验报告错误');
       // return data;
+      throw new Error(data.msg);
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+// 只传路径
+export async function downloadExperiment(experPath: string) {
+  try {
+    const data = await request('/api/experiment/download', {
+      method: 'GET',
+      params: {
+        experPath,
+      },
+      skipErrorHandler: true,
+    });
+    if (data.success) {
+      return data;
+    } else {
       throw new Error(data.msg);
     }
   } catch (err) {

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { IRouteComponentProps, Redirect, connect, Link } from 'umi';
-import { UserModelState } from '@/models/user';
+import { IRouteComponentProps, Redirect, Link } from 'umi';
 import { getExperiment, delExperiment } from '@/services/experiment';
 import { Table, Tag, Space, Button, Popconfirm, Modal, message } from 'antd';
 import { experiment } from '@/type/index';
 import AddExperiment from '@/components/addExperiment';
 import UpdateExperiment from '@/components/updateExperiment';
-function SelectExperiment({ user, location }: IRouteComponentProps) {
+function SelectExperiment({ location }: IRouteComponentProps) {
   var state = location.state;
   var courseId = state.courseId;
   var classId = state.classId;
@@ -20,7 +19,7 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
   const [experiments, setExperiments] = useState([]);
   const [stuCount, setStuCount] = useState(0);
   useEffect(() => {
-    getExperiment(courseId, classId, user.tid)
+    getExperiment(courseId, classId)
       .then((data) => {
         // 对数据进行加工一下
         var arr = data.experiments;
@@ -213,10 +212,4 @@ function SelectExperiment({ user, location }: IRouteComponentProps) {
     </div>
   );
 }
-
-function mapStateToProps({ user }: { user: UserModelState }) {
-  return {
-    user,
-  };
-}
-export default connect(mapStateToProps)(SelectExperiment);
+export default SelectExperiment;

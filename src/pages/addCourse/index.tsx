@@ -1,8 +1,10 @@
-import { Form, Input, Button, Checkbox, Row, Col, message } from 'antd';
+import { Form, Input, Button, Checkbox, Row, Col, message, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { ReactNode, useEffect, useState } from 'react';
-import { request } from 'umi';
+import { getCoursesByCollege, addCourse } from '@/services/course';
 import { getAllClass } from '@/services/class';
+import { course } from '@/type/index';
+
 const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 6 },
@@ -18,26 +20,30 @@ const AddCourse = () => {
   const [form] = Form.useForm();
   const onFinish = async (values: any) => {
     try {
-      const data = await request('/api/course/addcourse', {
-        method: 'POST',
-        params: values,
-        skipErrorHandler: true,
-      });
-      if (data.success) {
-        message.success(data.msg);
-        form.resetFields();
-      } else {
-        throw new Error(data.msg);
-      }
+      const data = await addCourse(values);
+      message.success(data.msg);
+      form.resetFields();
     } catch (err) {
       message.error(err.message);
     }
   };
+  const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   useEffect(() => {
-    getAllClass().then((data) => {
-      setClasses(data);
-    });
+    getCoursesByCollege()
+      .then((data) => {
+        setCourses(data);
+      })
+      .catch((err: Error) => {
+        message.error(err.message);
+      });
+    getAllClass()
+      .then((data) => {
+        setClasses(data);
+      })
+      .catch((err: Error) => {
+        message.error(err.message);
+      });
   }, []);
 
   var CheckboxByClasses = classes.map<ReactNode>(function (item: classes) {
@@ -55,11 +61,17 @@ const AddCourse = () => {
   return (
     <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
       <Form.Item
-        name="name"
+        name="courseId"
         label="课程名"
         rules={[{ required: true, message: '请输入课程名' }]}
       >
-        <Input style={{ width: '90%' }} />
+        <Select style={{ width: '90%' }}>
+          {courses.map((course: course) => (
+            <Select.Option key={course.id} value={course.id}>
+              {course.name}
+            </Select.Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item
         name="classes"
@@ -73,15 +85,15 @@ const AddCourse = () => {
       {/* 动态表单项 */}
       <Form.List
         name="experiments"
-        rules={[
-          {
-            validator: async (_, names) => {
-              if (!names || names.length < 1) {
-                return Promise.reject(new Error('最少添加一个实验报告'));
-              }
-            },
-          },
-        ]}
+        // rules={[
+        //   {
+        //     validator: async (_, names) => {
+        //       if (!names || names.length < 1) {
+        //         return Promise.reject(new Error('最少添加一个实验报告'));
+        //       }
+        //     },
+        //   },
+        // ]}
       >
         {/* fields就formlist里的小item内容，formlist用于动态操作添加表单项 */}
         {(fields, { add, remove }, { errors }) => (
@@ -139,5 +151,4 @@ const AddCourse = () => {
     </Form>
   );
 };
-
 export default AddCourse;

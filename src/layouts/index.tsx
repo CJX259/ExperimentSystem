@@ -10,7 +10,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 import styles from './index.less';
 import { UserModelState } from '@/models/user';
-import { getByCoursesTeacher } from '@/services/course';
+import { getCoursesByTeacher } from '@/services/course';
 // 还要包含课程等数据
 interface allStateProps {
   user: UserModelState;
@@ -35,7 +35,7 @@ const PageLayout: React.FC<PageLayout> = ({
   route,
   history,
   match,
-}: IRouteComponentProps) => {
+}: IRouteComponentProps & { user: UserModelState }) => {
   // 登录则不要渲染
   if (location.pathname === '/login') {
     return <div>{children}</div>;
@@ -45,14 +45,14 @@ const PageLayout: React.FC<PageLayout> = ({
     try {
       loginByCookie();
     } catch (err) {
-      // 登录信息有误，跳回login页面
+      // model那里定义的跳转了。
       message.error(err.message);
     }
-    getByCoursesTeacher()
+    getCoursesByTeacher()
       .then((data) => {
         setCourses(data);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         message.error(err.message);
       });
   }, []);
@@ -125,8 +125,18 @@ const PageLayout: React.FC<PageLayout> = ({
             </Popconfirm>
           </Header>
           <Content style={{ margin: '0 16px' }}>
+            {/* 面包屑 */}
             <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>{user.name}</Breadcrumb.Item>
+              <Breadcrumb.Item>
+                <Link
+                  to={{
+                    pathname: '/',
+                    state: {},
+                  }}
+                >
+                  {user.name}
+                </Link>
+              </Breadcrumb.Item>
               {(function () {
                 var pathname = location.pathname;
                 switch (pathname) {
@@ -137,22 +147,95 @@ const PageLayout: React.FC<PageLayout> = ({
                   case '/selectcourse':
                     var state = location.state || {};
                     var courseName = state.courseName || '';
-                    return <Breadcrumb.Item>{courseName}</Breadcrumb.Item>;
+                    return (
+                      <Breadcrumb.Item>
+                        <Link
+                          to={{
+                            pathname: '/selectcourse',
+                            state: {
+                              courseId: state.courseId,
+                              courseName: state.courseName,
+                            },
+                          }}
+                        >
+                          {courseName}
+                        </Link>
+                      </Breadcrumb.Item>
+                    );
                   case '/selectexperiment':
                     // 匹配到实验报告路径，也是返回课程名，因为下一个item需要这个课程名拼接
                     var state = location.state || {};
                     var courseName = state.courseName || '';
-                    return <Breadcrumb.Item>{courseName}</Breadcrumb.Item>;
+                    return (
+                      <Breadcrumb.Item>
+                        <Link
+                          to={{
+                            pathname: '/selectcourse',
+                            state: {
+                              courseId: state.courseId,
+                              courseName: state.courseName,
+                            },
+                          }}
+                        >
+                          {courseName}
+                        </Link>
+                      </Breadcrumb.Item>
+                    );
+                  case '/detailexperiment':
+                    var state = location.state || {};
+                    var courseName = state.courseName || '';
+                    return (
+                      <Breadcrumb.Item>
+                        <Link
+                          to={{
+                            pathname: '/selectcourse',
+                            state: {
+                              courseId: state.courseId,
+                              courseName: state.courseName,
+                            },
+                          }}
+                        >
+                          {courseName}
+                        </Link>
+                      </Breadcrumb.Item>
+                    );
                   default:
                     break;
                 }
               })()}
               {(function () {
                 var pathname = location.pathname;
-                if (pathname == '/selectexperiment') {
+                if (
+                  pathname == '/selectexperiment' ||
+                  pathname == '/detailexperiment'
+                ) {
                   var state = location.state || {};
                   var className = state.className;
-                  return <Breadcrumb.Item>{className}</Breadcrumb.Item>;
+                  return (
+                    <Breadcrumb.Item>
+                      <Link
+                        to={{
+                          pathname: '/selectexperiment',
+                          state: {
+                            courseId: state.courseId,
+                            courseName: state.courseName,
+                            classId: state.classId,
+                            className: state.className,
+                          },
+                        }}
+                      >
+                        {className}
+                      </Link>
+                    </Breadcrumb.Item>
+                  );
+                }
+              })()}
+              {(function () {
+                var pathname = location.pathname;
+                if (pathname == '/detailexperiment') {
+                  var state = location.state || {};
+                  var experimentName = state.experiment.name;
+                  return <Breadcrumb.Item>{experimentName}</Breadcrumb.Item>;
                 }
               })()}
             </Breadcrumb>
@@ -185,6 +268,12 @@ function isDefault(location: { pathname: string; state: any }): Array<string> {
       var courseId = location.state.courseId;
       return [`sub1_${courseId}`];
     case '/selectexperiment':
+      if (!location.state) {
+        return [];
+      }
+      var courseId = location.state.courseId;
+      return [`sub1_${courseId}`];
+    case '/detailexperiment':
       if (!location.state) {
         return [];
       }

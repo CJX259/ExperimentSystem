@@ -39,15 +39,14 @@ const UserModel: UserModelType = {
           action.payload.password,
         );
         if (data.success) {
-          message.success('登录成功', 1);
           yield put({ type: 'setUser', payload: data.data });
+          message.success('登录成功', 1);
         } else {
           // 登录失败的情况
           // message.error(data.msg);
           throw new Error(data.msg);
         }
       } catch (err) {
-        // 整个http错误和登录失败的错误，抛给页面处理
         message.error(err.message);
       }
     },
@@ -57,13 +56,12 @@ const UserModel: UserModelType = {
         if (data.success) {
           yield put({ type: 'setUser', payload: data.data });
         } else {
-          yield put({ type: 'setUser', payload: { name: '', tid: '' } });
+          yield put({ type: 'setUser', payload: {} });
           // 删除原来的cookie
           delCookie('userToken');
           throw new Error(data.msg);
         }
       } catch (err) {
-        // 抛出错误给主页面捕获
         message.error(err.message);
         history.push('/login');
       }

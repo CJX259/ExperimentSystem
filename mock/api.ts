@@ -47,26 +47,43 @@ export default {
       res.send({ success: false, data: {}, msg: 'cookie认证错误' });
     }
   },
-  // 拿到所有的class，真正来说不太科学，应该是老师同属学院的所有班级（但项目规模较小，若需要往后拓展，则需修改数据库结构）
+  // 拿到老师同属学院的所有班级
   'GET /api/class/getallclass': (req: any, res: any) => {
     res.send({
       success: true,
       data: {
         classes: [
-          { name: '信计181', id: '1' },
-          { name: '信计182', id: '2' },
-          { name: '数学183', id: '3' },
-          { name: '数学184', id: '4' },
-          { name: '基地185', id: '5' },
-          { name: '基地186', id: '6' },
-          { name: '精算187', id: '7' },
-          { name: '金融188', id: '8' },
-          { name: '金融189', id: '9' },
+          { name: '信计181', id: '1', grade: '2019' },
+          { name: '信计182', id: '2', grade: '2020' },
+          { name: '数学183', id: '3', grade: '2019' },
+          { name: '数学184', id: '4', grade: '2018' },
+          { name: '基地185', id: '5', grade: '2019' },
+          { name: '基地186', id: '6', grade: '2018' },
+          { name: '精算187', id: '7', grade: '2020' },
+          { name: '金融188', id: '8', grade: '2018' },
+          { name: '金融189', id: '9', grade: '2018' },
         ],
       },
       msg: 'OK',
     });
     // res.send({success: false, data: '', msg:"班级查询失败"});
+  },
+  // 通过cookie，拿到老师对应的学院，然后返回属于该学院的课程
+  'GET /api/course/getcourses': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {
+        courses: [
+          { name: '数据结构', id: '1' },
+          { name: '面向对象设计', id: '2' },
+          { name: 'javaweb', id: '3' },
+          { name: '软件工程', id: '4' },
+          { name: '操作系统', id: '5' },
+          { name: '计算机网络', id: '6' },
+        ],
+      },
+      msg: 'OK',
+    });
   },
   // 通过cookie拿到老师信息，返回老师所教的课程
   'GET /api/course/getcoursesbyteacher': (req: any, res: any) => {
@@ -99,16 +116,17 @@ export default {
       res.send({
         success: true,
         data: {
+          grades: ['2018', '2019', '2020'],
           classes: [
-            { name: '信计181', id: '1' },
-            { name: '信计182', id: '2' },
-            { name: '数学183', id: '3' },
-            { name: '数学184', id: '4' },
-            { name: '基地185', id: '5' },
-            { name: '基地186', id: '6' },
-            { name: '精算187', id: '7' },
-            { name: '金融188', id: '8' },
-            { name: '金融189', id: '9' },
+            { name: '信计181', id: '1', grade: '2018' },
+            { name: '信计182', id: '2', grade: '2018' },
+            { name: '数学183', id: '3', grade: '2018' },
+            { name: '数学194', id: '4', grade: '2019' },
+            { name: '基地195', id: '5', grade: '2019' },
+            { name: '基地201', id: '6', grade: '2020' },
+            { name: '精算202', id: '7', grade: '2020' },
+            { name: '金融198', id: '8', grade: '2019' },
+            { name: '金融189', id: '9', grade: '2018' },
           ],
         },
         msg: 'OK',
@@ -117,25 +135,25 @@ export default {
       res.send({
         success: true,
         data: {
+          grades: ['2018', '2019', '2020'],
           classes: [
-            { name: '信计181', id: '1' },
-            { name: '信计182', id: '2' },
-            { name: '数学183', id: '3' },
-            { name: '数学184', id: '4' },
-            { name: '基地185', id: '5' },
-            { name: '基地186', id: '6' },
-            { name: '精算187', id: '7' },
-            { name: '金融188', id: '8' },
-            { name: '金融189', id: '9' },
-            { name: '信计181', id: '10' },
-            { name: '信计182', id: '11' },
-            { name: '数学183', id: '12' },
-            { name: '数学184', id: '13' },
-            { name: '基地185', id: '14' },
-            { name: '基地186', id: '15' },
-            { name: '精算187', id: '16' },
-            { name: '金融188', id: '17' },
-            { name: '金融189', id: '18' },
+            { name: '信计181', id: '1', grade: '2018' },
+            { name: '信计182', id: '2', grade: '2018' },
+            { name: '数学183', id: '3', grade: '2018' },
+            { name: '数学194', id: '4', grade: '2019' },
+            { name: '基地195', id: '5', grade: '2019' },
+            { name: '基地201', id: '6', grade: '2020' },
+            { name: '精算202', id: '7', grade: '2020' },
+            { name: '金融198', id: '8', grade: '2019' },
+            { name: '金融189', id: '9', grade: '2018' },
+            { name: '基地195', id: '10', grade: '2019' },
+            { name: '基地201', id: '11', grade: '2020' },
+            { name: '精算202', id: '12', grade: '2020' },
+            { name: '金融198', id: '13', grade: '2019' },
+            { name: '金融189', id: '14', grade: '2018' },
+            { name: '基地195', id: '15', grade: '2019' },
+            { name: '基地195', id: '16', grade: '2019' },
+            { name: '基地195', id: '17', grade: '2019' },
           ],
         },
         msg: 'OK',
@@ -309,7 +327,7 @@ export default {
   // status：“0”， “1”
   // com_permit：“0”，“1”
   // name：暂定
-  'GET /api/experiment/getstudatabypage': (req: any, res: any) => {
+  'GET /api/student/getstudatabypage': (req: any, res: any) => {
     var experiment = req.query.experiment;
     var classId = req.query.classId;
     // 转化为数字
@@ -333,6 +351,56 @@ export default {
         count: 50,
         students: stus,
       },
+      msg: 'OK',
+    });
+  },
+
+  // 修改学生的开启/关闭通道
+  // 参数studentId和com_permit
+  'POST /api/student/changepermit': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: 'OK',
+    });
+    // res.send({
+    //   success:false,
+    //   data: {},
+    //   msg: '修改失败'
+    // })
+  },
+  // 修改分数，以及修改是否展示（isShow）
+  // 参数：studentId，grade，
+  'POST /api/student/uploadgrade': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: 'OK',
+    });
+    // res.send({
+    //   success:false,
+    //   data: {},
+    //   msg: '修改失败'
+    // })
+  },
+  // 修改isShow
+  // 参数：studentId，isShow
+  'POST /api/student/uploadisshow': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: 'OK',
+    });
+    // res.send({
+    //   success:false,
+    //   data: {},
+    //   msg: '修改失败'
+    // })
+  },
+  'GET /api/experiment/download': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
       msg: 'OK',
     });
   },
