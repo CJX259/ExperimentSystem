@@ -29,7 +29,7 @@ export async function getStuByClassByPage(
     throw new Error(err);
   }
 }
-export async function changePermit(studentId: string, com_permit: string) {
+export async function changePermit(studentId: string, com_permit: number) {
   try {
     const data = await request('/api/student/changepermit', {
       method: 'POST',
@@ -68,7 +68,7 @@ export async function uploadGrade(studentId: string, grade: string) {
     throw new Error(err.message);
   }
 }
-export async function uploadIsShow(studentId: string, isShow: string) {
+export async function uploadIsShow(studentId: string, isShow: number) {
   try {
     const data = await request('/api/student/uploadisshow', {
       method: 'POST',

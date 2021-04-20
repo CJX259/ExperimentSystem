@@ -324,8 +324,8 @@ export default {
   // 分页通过classId，exp信息拿到学生数据(join操作，再拿到finish表中学生的提交情况)
   // 可以添加参数进行筛选，没有接收到该参数就不对该值进行筛选
   // grade： “优秀”，“良好”，“及格”， “不及格”，“未评分”（未评分是找出grade为null的）
-  // status：“0”， “1”
-  // com_permit：“0”，“1”
+  // status：0、1
+  // com_permit：0、1
   // name：暂定
   'GET /api/student/getstudatabypage': (req: any, res: any) => {
     var experiment = req.query.experiment;

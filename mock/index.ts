@@ -3,7 +3,7 @@ const Random = mockjs.Random;
 
 Random.extend({
   grade: function () {
-    const grades = ['优秀', '良好', '及格', '不及格', null];
+    const grades = ['1', '2', '3', '4', '0'];
     return this.pick(grades);
   },
 });

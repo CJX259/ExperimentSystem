@@ -21,14 +21,14 @@ export interface course {
   name: string;
   id: string;
 }
-export type grade = '优秀' | '良好' | '及格' | '不及格' | '展示报告';
+export type grade = '1' | '2' | '3' | '4';
 export interface student {
   name: string;
   id: string;
-  com_permit: string;
+  com_permit: number;
   count: number;
   grade: grade;
-  isShow: string;
-  status: string;
+  isShow: number;
+  status: number;
   experPath: string;
 }
