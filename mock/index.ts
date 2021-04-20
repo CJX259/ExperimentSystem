@@ -19,7 +19,8 @@ export function getStuData() {
         'count|0-50': 1,
         'isShow|0-1': 1,
         'com_permit|0-1': 1,
-        experPath: 'E:作业大三下面向对象',
+        experPath:
+          'http://127.0.0.1:8080/%E7%B1%BB%E5%9B%BE%E8%AE%BE%E8%AE%A1.pdf',
       },
     ],
   });

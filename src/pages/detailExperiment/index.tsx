@@ -7,8 +7,8 @@ import {
   uploadIsShow,
 } from '../../services/student';
 import { downloadExperiment } from '@/services/experiment';
-import { Table, Tag, Space, Button, message, Tooltip } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { Table, Tag, Space, Button, message, Tooltip, Modal } from 'antd';
+import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
 import { student, grade } from '@/type/index';
 // 因为从1开始
 const gradeMap = ['未评分', '优秀', '良好', '及格', '不及格'];
@@ -19,7 +19,10 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
   const [loading, setLoading] = useState(false);
   // 多选的行
   const [selectKeys, setSelectKeys] = useState([]);
-  const [page, setPage] = useState({ pageSize: 10, current: 1, total: 0 });
+  // 预览modal
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [page, setPage] = useState({ pageSize: 7, current: 1, total: 0 });
   const [students, setStudents] = useState({ count: 0, students: [] });
   useEffect(() => {
     setLoading(true);
@@ -92,9 +95,15 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
         //record能拿到当前行数据
         return (
           <Space>
-            <Button type="dashed" style={{ fontSize: '12px' }} size="small">
+            <Button
+              type="dashed"
+              onClick={handlePreview(record)}
+              style={{ fontSize: '12px' }}
+              size="small"
+            >
               预览
             </Button>
+
             <Tooltip
               trigger="click"
               overlayStyle={{
@@ -173,6 +182,18 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
   const onSelectChange = (selectKeysData: any) => {
     // selectKeysData为被选中元素的key，也就是id
     setSelectKeys(selectKeysData);
+  };
+  // 处理打开预览
+  const handlePreview = (student: student) => {
+    return function () {
+      setPreviewUrl(student.experPath);
+      setPreviewVisible(true);
+    };
+  };
+  // 处理关闭预览
+  const handleCancel = () => {
+    setPreviewVisible(false);
+    setPreviewUrl('');
   };
   // 处理多选
   const rowSelection = {
@@ -354,6 +375,31 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
         onChange={handleTableChange}
         dataSource={students.students}
       />
+      <Modal
+        visible={previewVisible}
+        footer={null}
+        onCancel={handleCancel}
+        closeIcon={
+          <CloseOutlined style={{ transform: 'translate(10px, -10px)' }} />
+        }
+        width={1200}
+        style={{
+          top: '10px',
+        }}
+      >
+        {previewUrl != '' ? (
+          <iframe
+            title="PDF"
+            className="scrolling"
+            scrolling="no"
+            frameBorder="0"
+            id="press"
+            src={previewUrl}
+            width="100%"
+            height={630}
+          />
+        ) : null}
+      </Modal>
     </div>
   );
 }

@@ -1,4 +1,15 @@
-import { Form, Input, Button, Checkbox, Row, Col, message, Select } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Checkbox,
+  Row,
+  Col,
+  message,
+  Select,
+  Space,
+  DatePicker,
+} from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { ReactNode, useEffect, useState } from 'react';
 import { getCoursesByCollege, addCourse } from '@/services/course';
@@ -7,18 +18,28 @@ import { course } from '@/type/index';
 
 const layout = {
   labelCol: { span: 3 },
-  wrapperCol: { span: 6 },
+  wrapperCol: { span: 10 },
 };
 const tailLayout = {
-  wrapperCol: { offset: 3, span: 6 },
+  wrapperCol: { offset: 3, span: 10 },
 };
 interface classes {
   id: number;
   name: string;
 }
+interface experiment {
+  name: string;
+  deadline: any;
+}
 const AddCourse = () => {
   const [form] = Form.useForm();
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: { experiments: experiment[] }) => {
+    // console.log(values);
+    var newExperiments = values.experiments.map((value: experiment) => {
+      value.deadline = value.deadline.format('YYYY-MM-DD');
+      return value;
+    });
+    values.experiments = newExperiments;
     try {
       const data = await addCourse(values);
       message.success(data.msg);
@@ -83,46 +104,44 @@ const AddCourse = () => {
         </Checkbox.Group>
       </Form.Item>
       {/* 动态表单项 */}
-      <Form.List
-        name="experiments"
-        // rules={[
-        //   {
-        //     validator: async (_, names) => {
-        //       if (!names || names.length < 1) {
-        //         return Promise.reject(new Error('最少添加一个实验报告'));
-        //       }
-        //     },
-        //   },
-        // ]}
-      >
+      <Form.List name="experiments">
         {/* fields就formlist里的小item内容，formlist用于动态操作添加表单项 */}
         {(fields, { add, remove }, { errors }) => (
           <>
-            {fields.map((field, index) => (
+            {fields.map(({ key, name, fieldKey, ...restField }, index) => (
               <Form.Item
                 label={'实验报告' + (index + 1)}
                 required={true}
-                key={field.key}
+                key={key}
               >
-                <Form.Item
-                  {...field}
-                  validateTrigger={['onChange', 'onBlur']}
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: '请输入实验报告名称，或删除此项',
-                    },
-                  ]}
-                  noStyle
+                {/* 分割线 */}
+                <Space
+                  key={key}
+                  style={{ display: 'flex', height: '32px', width: '100%' }}
+                  align="baseline"
                 >
-                  <Input placeholder="实验报告名称" style={{ width: '90%' }} />
-                </Form.Item>
-                <MinusCircleOutlined
-                  // style={{marginLeft: '5px'}}
-                  className="dynamic-delete-button"
-                  onClick={() => remove(field.name)}
-                />
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'experimentName']}
+                    // 这个单项formItem的key
+                    fieldKey={[fieldKey, 'experimentName']}
+                    rules={[{ required: true, message: '填写或删除此项' }]}
+                  >
+                    <Input placeholder="实验报告名称" />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'deadline']}
+                    fieldKey={[fieldKey, 'deadline']}
+                    rules={[{ required: true, message: '填写或删除此项' }]}
+                  >
+                    <DatePicker placeholder="截止日期" />
+                  </Form.Item>
+                  <MinusCircleOutlined
+                    className="dynamic-delete-button"
+                    onClick={() => remove(name)}
+                  />
+                </Space>
               </Form.Item>
             ))}
             <Form.Item label="添加实验报告">
