@@ -125,13 +125,17 @@ function SelectExperiment({ location }: IRouteComponentProps) {
   ];
   const deleteExperiment = async ({ id }: experiment): Promise<void> => {
     // 发送请求，成功就消除前端数据
-    const success = await delExperiment(id);
-    if (success) {
-      var arr = experiments.filter((item: experiment) => {
-        return !(item.id === id && item.uid === uid);
+    delExperiment(id)
+      .then((data) => {
+        var arr = experiments.filter((item: experiment) => {
+          return !(item.id === id);
+        });
+        message.success(data.msg);
+        setExperiments(arr);
+      })
+      .catch((err: Error) => {
+        message.error(err.message);
       });
-      setExperiments(arr);
-    }
   };
   // 更新前端的实验列表
   function addExperimentInWeb(experiment: never): void {

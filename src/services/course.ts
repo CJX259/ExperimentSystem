@@ -3,6 +3,7 @@ export async function getCoursesByTeacher() {
   try {
     const data = await request('/api/course/getcoursesbyteacher', {
       method: 'GET',
+      skipErrorHandler: true,
     });
     if (data.success) {
       return data.data.courses;

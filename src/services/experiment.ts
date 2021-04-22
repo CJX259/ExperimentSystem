@@ -34,8 +34,7 @@ export async function delExperiment(id: string) {
       },
     });
     if (data.success) {
-      message.success('删除成功');
-      return data.success;
+      return data;
     } else {
       // message.error(data.msg || '删除实验报告错误');
       // return data.success;

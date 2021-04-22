@@ -19,7 +19,7 @@ export interface experiment {
 }
 export interface course {
   name: string;
-  id: string;
+  uid: string;
 }
 export type grade = '1' | '2' | '3' | '4';
 export interface student {

@@ -10,18 +10,12 @@ const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 import styles from './index.less';
 import { UserModelState } from '@/models/user';
+import { course } from '@/type/index';
 import { getCoursesByTeacher } from '@/services/course';
-// 还要包含课程等数据
-interface allStateProps {
-  user: UserModelState;
-}
+// courseId的值为course的uid！！！！
 interface allDispatchProps {
   loginByCookie: () => void;
   logout: () => void;
-}
-interface Course {
-  name: string;
-  id: number;
 }
 type PageLayout = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
@@ -41,6 +35,8 @@ const PageLayout: React.FC<PageLayout> = ({
     return <div>{children}</div>;
   }
   const [courses, setCourses] = useState([]);
+  // 使用两个useEffect，分别请求不同的内容（实现失败，可能setTimeout能实现）
+  // 防止页面在未登录的情况下（即没有cookie信息），请求所有接口，导致一次报太多错误，以及节省http请求
   useEffect(() => {
     try {
       loginByCookie();
@@ -56,6 +52,19 @@ const PageLayout: React.FC<PageLayout> = ({
         message.error(err.message);
       });
   }, []);
+  // 顺序执行，失效~
+  // useEffect(() => {
+  //   if (!user.tid) {
+  //     return;
+  //   }
+  //   getCoursesByTeacher()
+  //     .then((data) => {
+  //       setCourses(data);
+  //     })
+  //     .catch((err: Error) => {
+  //       message.error(err.message);
+  //     });
+  // }, [user.tid])
   // 确认登出
   const handleLogout = () => {
     logout();
@@ -84,14 +93,14 @@ const PageLayout: React.FC<PageLayout> = ({
               <Link to="/addcourse">添加课程</Link>
             </Menu.Item>
             <SubMenu key="sub1" icon={<TableOutlined />} title="查看课程">
-              {courses.map((course: Course) => {
+              {courses.map((course: course) => {
                 return (
-                  <Menu.Item key={'sub1_' + course.id}>
+                  <Menu.Item key={'sub1_' + course.uid}>
                     <Link
                       to={{
                         pathname: '/selectcourse',
                         state: {
-                          courseId: course.id,
+                          courseId: course.uid,
                           courseName: course.name,
                         },
                       }}
@@ -219,7 +228,7 @@ const PageLayout: React.FC<PageLayout> = ({
                           state: {
                             courseId: state.courseId,
                             courseName: state.courseName,
-                            classId: state.classId,
+                            classUid: state.classUid,
                             className: state.className,
                           },
                         }}

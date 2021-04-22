@@ -74,12 +74,12 @@ export default {
       success: true,
       data: {
         courses: [
-          { name: '数据结构', id: '1' },
-          { name: '面向对象设计', id: '2' },
-          { name: 'javaweb', id: '3' },
-          { name: '软件工程', id: '4' },
-          { name: '操作系统', id: '5' },
-          { name: '计算机网络', id: '6' },
+          { name: '数据结构', uid: '1' },
+          { name: '面向对象设计', uid: '2' },
+          { name: 'javaweb', uid: '3' },
+          { name: '软件工程', uid: '4' },
+          { name: '操作系统', uid: '5' },
+          { name: '计算机网络', uid: '6' },
         ],
       },
       msg: 'OK',
@@ -87,21 +87,26 @@ export default {
   },
   // 通过cookie拿到老师信息，返回老师所教的课程
   'GET /api/course/getcoursesbyteacher': (req: any, res: any) => {
-    res.send({
-      success: true,
-      data: {
-        courses: [
-          { name: '数据结构', id: '1' },
-          { name: '面向对象设计', id: '2' },
-          { name: 'javaweb', id: '3' },
-          { name: '软件工程', id: '4' },
-          { name: '操作系统', id: '5' },
-          { name: '计算机网络', id: '6' },
-        ],
-      },
-      msg: 'OK',
-    });
-    // res.send({success: false, data: '', msg:"课程查询失败"});
+    var cookie = req.headers.cookie || 'nothing';
+    var needCookie = getCookie('userToken', cookie);
+    if (needCookie != null) {
+      res.send({
+        success: true,
+        data: {
+          courses: [
+            { name: '数据结构', uid: '1' },
+            { name: '面向对象设计', uid: '2' },
+            { name: 'javaweb', uid: '3' },
+            { name: '软件工程', uid: '4' },
+            { name: '操作系统', uid: '5' },
+            { name: '计算机网络', uid: '6' },
+          ],
+        },
+        msg: 'OK',
+      });
+    } else {
+      res.send({ success: false, data: '', msg: '课程查询失败' });
+    }
   },
   'POST /api/course/addcourse': (req: any, res: any) => {
     // console.log(req.query);
@@ -245,13 +250,12 @@ export default {
   },
   // 通过uid和实验报告id来删除实验报告
   'POST /api/experiment/delexperiment': (req: any, res: any) => {
-    var uid = req.query.uid;
     var id = req.query.id;
-    if (uid && id) {
+    if (id) {
       res.send({
         success: true,
         data: {},
-        msg: 'ok',
+        msg: '删除成功',
       });
     } else {
       res.send({
@@ -264,7 +268,7 @@ export default {
 
   //通过name，deadline，uid添加实验报告
   'POST /api/experiment/addexperiment': (req: any, res: any) => {
-    if (Math.random() > 0.5) {
+    if (Math.random() > 0.7) {
       var name = req.query.name;
       var deadline = req.query.deadline;
       var uid = req.query.uid;
@@ -273,8 +277,10 @@ export default {
         data: {
           experiments: [
             {
+              // 返回同一个uid
               uid,
               name,
+              // 随机id
               id: '1' + new Date().toLocaleString(),
               deadline,
               submitted: 0,
@@ -292,7 +298,7 @@ export default {
     }
   },
 
-  //通过uid+id，修改实验报告
+  //通过id，修改实验报告,后台可以不用接收uid，但是要返回uid（add要用）
   'POST /api/experiment/updateexperiment': (req: any, res: any) => {
     if (Math.random() > 0.7) {
       var name = req.query.name;
@@ -330,12 +336,12 @@ export default {
   // name：暂定
   'GET /api/student/getstudatabypage': (req: any, res: any) => {
     var experiment = req.query.experiment;
-    var classId = req.query.classId;
+    var classUid = req.query.classUid;
     // 转化为数字
     // res.send({success: false, data: {}, msg:"学生数据获取失败"});
     var current = +req.query.current || 1;
     var pageSize = +req.query.pageSize || 10;
-    if (!classId || !experiment) {
+    if (!classUid || !experiment) {
       res.send({
         success: false,
         data: {},
@@ -404,6 +410,23 @@ export default {
       data: {},
       msg: 'OK',
     });
+  },
+
+  // message部分
+  // 提醒该experiment的班级的学生提交实验报告
+  // 通过experimentId和classUid中的所有stuId，拿到finish表的数据，拿到提交状态，筛选出未提交的学生
+  // 给未提交的学生发送信息（插入信息到message表中）
+  'POST /api/message/remindsubmit': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: '提醒成功',
+    });
+    // res.send({
+    //   success: false,
+    //   data: {},
+    //   msg: '提醒失败'
+    // })
   },
 };
 const students = getStuData();

@@ -23,7 +23,7 @@ export async function getClassByCourseId(courseId: string) {
       method: 'GET',
       skipErrorHandler: true,
       params: {
-        courseId,
+        courseUid: courseId,
       },
     });
     if (data.success) {

@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { IRouteComponentProps, Redirect } from 'umi';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
+import { IRouteComponentProps, Redirect, connect } from 'umi';
 import {
   getStuByClassByPage,
   changePermit,
   uploadGrade,
   uploadIsShow,
 } from '../../services/student';
-import { downloadExperiment } from '@/services/experiment';
+import { delExperiment, downloadExperiment } from '@/services/experiment';
 import { Table, Tag, Space, Button, message, Tooltip, Modal } from 'antd';
 import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
 import { student, grade } from '@/type/index';
+import { remindSubmit } from '@/services/message';
+import { UserModelState } from '@/models/user';
 // 因为从1开始
 const gradeMap = ['未评分', '优秀', '良好', '及格', '不及格'];
 // 展示该班级下选了该课程的学生，以及它们实验报告的提交情况
-export default function DetailExperiment({ location }: IRouteComponentProps) {
+function DetailExperiment({
+  location,
+  user,
+}: IRouteComponentProps & { user: UserModelState }) {
   let state = location.state;
   var experiment = state.experiment;
   var classUid = state.classUid;
@@ -28,6 +33,10 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const [page, setPage] = useState({ pageSize: 7, current: 1, total: 0 });
+  // 控制table中的节流timer数组(看下单个timer能不能行，不行就用数组的)
+  // const [timers, setTimers] = useState(new Array(page.pageSize).fill(null));
+  // 控制table中的节流timer
+  const [timer, setTimer] = useState(null);
   const [students, setStudents] = useState({ count: 0, students: [] });
   useEffect(() => {
     setLoading(true);
@@ -125,7 +134,7 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
                     );
                   })}
                   <Button
-                    onClick={handleIsShow(record)}
+                    onClick={throttle(handleIsShow(record), true, 500)}
                     type={record.isShow ? 'primary' : 'default'}
                     size="small"
                   >
@@ -152,7 +161,7 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
             size="small"
             style={{ fontSize: '12px' }}
             danger={!!open}
-            onClick={handleOpenClick(record)}
+            onClick={throttle(handleOpenClick(record), true, 500)}
           >
             {open ? '关闭' : '开启'}
           </Button>
@@ -171,7 +180,7 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
             type="primary"
             style={{ fontSize: '12px' }}
             shape="round"
-            onClick={handleDownload(record)}
+            onClick={throttle(handleDownload(record))}
             icon={<DownloadOutlined />}
             size="small"
           ></Button>
@@ -345,7 +354,60 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
         setLoading(false);
       });
   };
+  function remindStudent(this: any) {
+    remindSubmit(user.tid, classUid, experiment.id)
+      .then((data) => {
+        message.success(data.msg, 0.5);
+      })
+      .catch((err: Error) => {
+        message.error(err.message);
+      });
+  }
+  // 节流处理,先直接执行函数
+  // isRender为true，则是处理会重新渲染table的异步函数
+  // 此时使用的timer是state中的timer
+  // （目的是重新渲染table时，不会因为重新给onclick绑定事件而导致的throttle节流函数重新执行，导致闭包里的timer被重新初始化
+  // 从而导致节流无效，放timer到state中就不会被重新初始化！）
 
+  function throttle(
+    this: any,
+    fn: Function,
+    isRender: boolean = false,
+    duration: number = 1500,
+    ...args: any
+  ) {
+    let _timer: any = null;
+    let _this = this;
+    return function () {
+      let _args = [].concat(...args, arguments as any);
+      if (!isRender && _timer == null) {
+        fn.apply(_this, _args);
+        _timer = setTimeout(() => {
+          _timer = null;
+        }, duration);
+      } else if (isRender && timer == null) {
+        fn.apply(_this, _args);
+        var temp = setTimeout(() => {
+          setTimer(null);
+        }, duration);
+        setTimer(temp as any);
+      }
+    };
+  }
+  // index代表使用的timer是第几行的timer
+  // function throttleInRender(this: any, fn: Function, duration: number = 1500, ...args: any) {
+  //   let _this = this;
+  //   return function () {
+  //     let _args = [].concat(...args, arguments as any);
+  //     if (timer == null) {
+  //       fn.apply(_this, _args);
+  //       var temp = setTimeout(() => {
+  //         setTimer(null);
+  //       }, duration);
+  //       setTimer(temp as any);
+  //     }
+  //   }
+  // }
   return (
     <div>
       <div
@@ -356,7 +418,7 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
       >
         <Button
           type="primary"
-          onClick={handleMuchDownload}
+          onClick={throttle(handleMuchDownload)}
           disabled={selectKeys.length === 0}
           loading={loading}
         >
@@ -375,6 +437,12 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
         onChange={handleTableChange}
         dataSource={students.students}
       />
+      <Button
+        style={{ transform: 'translateY(-48px)' }}
+        onClick={throttle(remindStudent)}
+      >
+        一键催交
+      </Button>
       <Modal
         visible={previewVisible}
         footer={null}
@@ -403,3 +471,9 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
     </div>
   );
 }
+function mapStateToProps({ user }: { user: UserModelState }) {
+  return {
+    user,
+  };
+}
+export default connect(mapStateToProps)(DetailExperiment);

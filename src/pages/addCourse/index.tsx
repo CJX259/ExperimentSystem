@@ -15,8 +15,6 @@ import { ReactNode, useEffect, useState } from 'react';
 import { getCoursesByCollege, addCourse } from '@/services/course';
 import { getAllClass } from '@/services/class';
 import { course, classData } from '@/type/index';
-import { UserModelState } from '@/models/user';
-import { connect } from 'umi';
 const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 10 },
@@ -29,18 +27,20 @@ interface experiment {
   name: string;
   deadline: any;
 }
-const AddCourse = ({ collegeId }: { collegeId: string }) => {
+const AddCourse = () => {
   const [form] = Form.useForm();
   const onFinish = async (values: { experiments: any }) => {
     // console.log(values);
-    var newExperiments = values.experiments.map((value: experiment) => {
-      value.deadline = value.deadline.format('YYYY-MM-DD');
-      return value;
-    });
+    var newExperiments =
+      values.experiments &&
+      values.experiments.map((value: experiment) => {
+        value.deadline = value.deadline.format('YYYY-MM-DD');
+        return value;
+      });
     // 把传输对象转换为JSON格式，便于后端处理
     values.experiments = JSON.stringify(newExperiments);
     try {
-      const data = await addCourse({ ...values, collegeId });
+      const data = await addCourse(values);
       message.success(data.msg);
       form.resetFields();
     } catch (err) {
@@ -59,7 +59,6 @@ const AddCourse = ({ collegeId }: { collegeId: string }) => {
       });
     getAllClass()
       .then((data) => {
-        console.log(data);
         setClasses(data);
       })
       .catch((err: Error) => {
@@ -88,7 +87,7 @@ const AddCourse = ({ collegeId }: { collegeId: string }) => {
       >
         <Select style={{ width: '90%' }}>
           {courses.map((course: course) => (
-            <Select.Option key={course.id} value={course.id}>
+            <Select.Option key={course.uid} value={course.uid}>
               {course.name}
             </Select.Option>
           ))}
@@ -170,9 +169,4 @@ const AddCourse = ({ collegeId }: { collegeId: string }) => {
     </Form>
   );
 };
-function mapStateToProps({ user }: { user: UserModelState }) {
-  return {
-    collegeId: user.collegeId,
-  };
-}
-export default connect(mapStateToProps)(AddCourse);
+export default AddCourse;

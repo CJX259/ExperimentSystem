@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { connect, IRouteComponentProps, Redirect } from 'umi';
+import { IRouteComponentProps } from 'umi';
 import { getClassByCourseId } from '@/services/class';
 import ClassCard from '@/components/ClassCard';
 import { message } from 'antd';
