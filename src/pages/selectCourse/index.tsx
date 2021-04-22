@@ -14,7 +14,6 @@ function SelectCourse({ location }: IRouteComponentProps) {
   useEffect(() => {
     getClassByCourseId(courseId)
       .then((data) => {
-        console.log(data);
         setClasses(data.classes);
         setGrades(data.grades);
       })
@@ -33,9 +32,9 @@ function SelectCourse({ location }: IRouteComponentProps) {
                 if (item.grade == grade) {
                   return (
                     <ClassCard
-                      key={item.id}
+                      key={item.uid}
                       name={item.name}
-                      id={item.id}
+                      uid={item.uid}
                     ></ClassCard>
                   );
                 }

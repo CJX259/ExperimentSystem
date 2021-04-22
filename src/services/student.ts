@@ -2,7 +2,7 @@ import { request } from 'umi';
 import { experiment } from '@/type';
 // 分页拿到某个班的学生(需传exp信息，拿到finish表内容拼接)
 export async function getStuByClassByPage(
-  classId: string,
+  classUid: string,
   experiment: experiment,
   current: number,
   pageSize: number,
@@ -13,7 +13,7 @@ export async function getStuByClassByPage(
       method: 'GET',
       params: {
         experiment,
-        classId,
+        classUid,
         current,
         pageSize,
         ...filters,

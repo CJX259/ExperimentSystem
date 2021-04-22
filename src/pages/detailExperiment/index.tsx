@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IRouteComponentProps } from 'umi';
+import { IRouteComponentProps, Redirect } from 'umi';
 import {
   getStuByClassByPage,
   changePermit,
@@ -15,6 +15,11 @@ const gradeMap = ['未评分', '优秀', '良好', '及格', '不及格'];
 // 展示该班级下选了该课程的学生，以及它们实验报告的提交情况
 export default function DetailExperiment({ location }: IRouteComponentProps) {
   let state = location.state;
+  var experiment = state.experiment;
+  var classUid = state.classUid;
+  if (!experiment || !classUid) {
+    return <Redirect to="/"></Redirect>;
+  }
   // 分页变量
   const [loading, setLoading] = useState(false);
   // 多选的行
@@ -26,12 +31,7 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
   const [students, setStudents] = useState({ count: 0, students: [] });
   useEffect(() => {
     setLoading(true);
-    getStuByClassByPage(
-      state.classId,
-      state.experiment,
-      page.current,
-      page.pageSize,
-    )
+    getStuByClassByPage(classUid, experiment, page.current, page.pageSize)
       .then((data) => {
         setStudents(data);
         setLoading(false);
@@ -329,8 +329,8 @@ export default function DetailExperiment({ location }: IRouteComponentProps) {
     setLoading(true);
     setSelectKeys([]);
     getStuByClassByPage(
-      state.classId,
-      state.experiment,
+      classUid,
+      experiment,
       page.current,
       page.pageSize,
       filters,

@@ -1,14 +1,14 @@
 import { message } from 'antd';
 import { request } from 'umi';
 
-export async function getExperiment(courseId: string, classId: string) {
+export async function getExperiment(courseId: string, classUid: string) {
   try {
     const data = await request('/api/experiment/getexperiments', {
       method: 'GET',
       skipErrorHandler: true,
       params: {
         courseId,
-        classId,
+        classUid,
       },
     });
     if (data.success) {
@@ -24,13 +24,12 @@ export async function getExperiment(courseId: string, classId: string) {
   }
 }
 
-export async function delExperiment(uid: string, id: string) {
+export async function delExperiment(id: string) {
   try {
     const data = await request('/api/experiment/delexperiment', {
       method: 'POST',
       skipErrorHandler: true,
       params: {
-        uid,
         id,
       },
     });
@@ -76,7 +75,6 @@ export async function addExperiment(
 }
 
 export async function updateExperiment(
-  uid: string,
   id: string,
   name: string,
   deadline: string,
@@ -86,7 +84,6 @@ export async function updateExperiment(
       method: 'POST',
       skipErrorHandler: true,
       params: {
-        uid,
         id,
         name,
         deadline,

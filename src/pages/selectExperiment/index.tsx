@@ -8,8 +8,8 @@ import UpdateExperiment from '@/components/updateExperiment';
 function SelectExperiment({ location }: IRouteComponentProps) {
   var state = location.state;
   var courseId = state.courseId;
-  var classId = state.classId;
-  if (!courseId || !classId) {
+  var classUid = state.classUid;
+  if (!courseId || !classUid) {
     return <Redirect to="/"></Redirect>;
   }
   const [addVisible, setAddVisible] = useState(false);
@@ -19,7 +19,7 @@ function SelectExperiment({ location }: IRouteComponentProps) {
   const [experiments, setExperiments] = useState([]);
   const [stuCount, setStuCount] = useState(0);
   useEffect(() => {
-    getExperiment(courseId, classId)
+    getExperiment(courseId, classUid)
       .then((data) => {
         // 对数据进行加工一下
         var arr = data.experiments;
@@ -123,9 +123,9 @@ function SelectExperiment({ location }: IRouteComponentProps) {
       ),
     },
   ];
-  const deleteExperiment = async ({ uid, id }: experiment): Promise<void> => {
+  const deleteExperiment = async ({ id }: experiment): Promise<void> => {
     // 发送请求，成功就消除前端数据
-    const success = await delExperiment(uid, id);
+    const success = await delExperiment(id);
     if (success) {
       var arr = experiments.filter((item: experiment) => {
         return !(item.id === id && item.uid === uid);

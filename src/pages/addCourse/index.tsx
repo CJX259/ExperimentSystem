@@ -14,8 +14,9 @@ import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { ReactNode, useEffect, useState } from 'react';
 import { getCoursesByCollege, addCourse } from '@/services/course';
 import { getAllClass } from '@/services/class';
-import { course } from '@/type/index';
-
+import { course, classData } from '@/type/index';
+import { UserModelState } from '@/models/user';
+import { connect } from 'umi';
 const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 10 },
@@ -23,25 +24,23 @@ const layout = {
 const tailLayout = {
   wrapperCol: { offset: 3, span: 10 },
 };
-interface classes {
-  id: number;
-  name: string;
-}
+
 interface experiment {
   name: string;
   deadline: any;
 }
-const AddCourse = () => {
+const AddCourse = ({ collegeId }: { collegeId: string }) => {
   const [form] = Form.useForm();
-  const onFinish = async (values: { experiments: experiment[] }) => {
+  const onFinish = async (values: { experiments: any }) => {
     // console.log(values);
     var newExperiments = values.experiments.map((value: experiment) => {
       value.deadline = value.deadline.format('YYYY-MM-DD');
       return value;
     });
-    values.experiments = newExperiments;
+    // 把传输对象转换为JSON格式，便于后端处理
+    values.experiments = JSON.stringify(newExperiments);
     try {
-      const data = await addCourse(values);
+      const data = await addCourse({ ...values, collegeId });
       message.success(data.msg);
       form.resetFields();
     } catch (err) {
@@ -60,6 +59,7 @@ const AddCourse = () => {
       });
     getAllClass()
       .then((data) => {
+        console.log(data);
         setClasses(data);
       })
       .catch((err: Error) => {
@@ -67,10 +67,10 @@ const AddCourse = () => {
       });
   }, []);
 
-  var CheckboxByClasses = classes.map<ReactNode>(function (item: classes) {
+  var CheckboxByClasses = classes.map<ReactNode>(function (item: classData) {
     return (
-      <Col span={32} key={item.id}>
-        <Checkbox value={item.id} style={{ lineHeight: '32px' }}>
+      <Col span={32} key={item.uid}>
+        <Checkbox value={item.uid} style={{ lineHeight: '32px' }}>
           {item.name}
         </Checkbox>
       </Col>
@@ -170,4 +170,9 @@ const AddCourse = () => {
     </Form>
   );
 };
-export default AddCourse;
+function mapStateToProps({ user }: { user: UserModelState }) {
+  return {
+    collegeId: user.collegeId,
+  };
+}
+export default connect(mapStateToProps)(AddCourse);

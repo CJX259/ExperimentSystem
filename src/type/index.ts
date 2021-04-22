@@ -4,8 +4,8 @@ export interface loadingModelState {
 }
 export interface classData {
   name: string;
-  id: string;
-  grade: string;
+  uid: string;
+  grade?: string;
 }
 
 export interface experiment {
@@ -15,7 +15,7 @@ export interface experiment {
   submitted: number;
   stuCount?: number;
   finish?: boolean;
-  uid: string;
+  uid?: string;
 }
 export interface course {
   name: string;
