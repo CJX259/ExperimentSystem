@@ -9,6 +9,7 @@ import {
   Select,
   Space,
   DatePicker,
+  Spin,
 } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { ReactNode, useEffect, useState } from 'react';
@@ -47,15 +48,22 @@ const AddCourse = () => {
       message.error(err.message);
     }
   };
+  const [courseLoading, setCourseLoading] = useState(false);
+  const [classLoading, setClassLoading] = useState(false);
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   useEffect(() => {
+    setClassLoading(true);
+    setCourseLoading(true);
     getCoursesByCollege()
       .then((data) => {
         setCourses(data);
       })
       .catch((err: Error) => {
         message.error(err.message);
+      })
+      .finally(() => {
+        setCourseLoading(false);
       });
     getAllClass()
       .then((data) => {
@@ -63,6 +71,9 @@ const AddCourse = () => {
       })
       .catch((err: Error) => {
         message.error(err.message);
+      })
+      .finally(() => {
+        setClassLoading(false);
       });
   }, []);
 
@@ -79,94 +90,100 @@ const AddCourse = () => {
     form.resetFields();
   };
   return (
-    <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
-      <Form.Item
-        name="courseId"
-        label="课程名"
-        rules={[{ required: true, message: '请输入课程名' }]}
-      >
-        <Select style={{ width: '90%' }}>
-          {courses.map((course: course) => (
-            <Select.Option key={course.uid} value={course.uid}>
-              {course.name}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="classes"
-        label="任课班级"
-        rules={[{ required: true, message: '至少选择一个班级' }]}
-      >
-        <Checkbox.Group>
-          <Row>{CheckboxByClasses}</Row>
-        </Checkbox.Group>
-      </Form.Item>
-      {/* 动态表单项 */}
-      <Form.List name="experiments">
-        {/* fields就formlist里的小item内容，formlist用于动态操作添加表单项 */}
-        {(fields, { add, remove }, { errors }) => (
-          <>
-            {fields.map(({ key, name, fieldKey, ...restField }, index) => (
-              <Form.Item
-                label={'实验报告' + (index + 1)}
-                required={true}
-                key={key}
-              >
-                {/* 分割线 */}
-                <Space
-                  key={key}
-                  style={{ display: 'flex', height: '32px', width: '100%' }}
-                  align="baseline"
-                >
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'experimentName']}
-                    // 这个单项formItem的key
-                    fieldKey={[fieldKey, 'experimentName']}
-                    rules={[{ required: true, message: '填写或删除此项' }]}
-                  >
-                    <Input placeholder="实验报告名称" />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'deadline']}
-                    fieldKey={[fieldKey, 'deadline']}
-                    rules={[{ required: true, message: '填写或删除此项' }]}
-                  >
-                    <DatePicker placeholder="截止日期" />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    className="dynamic-delete-button"
-                    onClick={() => remove(name)}
-                  />
-                </Space>
-              </Form.Item>
+    <Spin spinning={courseLoading || classLoading}>
+      <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
+        <Form.Item
+          name="courseId"
+          label="课程名"
+          rules={[{ required: true, message: '请输入课程名' }]}
+        >
+          <Select style={{ width: '90%' }}>
+            {courses.map((course: course) => (
+              <Select.Option key={course.uid} value={course.uid}>
+                {course.name}
+              </Select.Option>
             ))}
-            <Form.Item label="添加实验报告">
-              <Button
-                type="dashed"
-                onClick={() => add()}
-                // style={{ width: '60%' }}
-                icon={<PlusOutlined />}
-              >
-                添加
-              </Button>
-              <Form.ErrorList errors={errors} />
-            </Form.Item>
-          </>
-        )}
-      </Form.List>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="classes"
+          label="任课班级"
+          rules={[{ required: true, message: '至少选择一个班级' }]}
+        >
+          <Checkbox.Group>
+            <Row>{CheckboxByClasses}</Row>
+          </Checkbox.Group>
+        </Form.Item>
+        {/* 动态表单项 */}
+        <Form.List name="experiments">
+          {/* fields就formlist里的小item内容，formlist用于动态操作添加表单项 */}
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map(({ key, name, fieldKey, ...restField }, index) => (
+                <Form.Item
+                  label={'实验报告' + (index + 1)}
+                  required={true}
+                  key={key}
+                >
+                  {/* 分割线 */}
+                  <Space
+                    key={key}
+                    style={{ display: 'flex', height: '32px', width: '100%' }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'experimentName']}
+                      // 这个单项formItem的key
+                      fieldKey={[fieldKey, 'experimentName']}
+                      rules={[{ required: true, message: '填写或删除此项' }]}
+                    >
+                      <Input placeholder="实验报告名称" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'deadline']}
+                      fieldKey={[fieldKey, 'deadline']}
+                      rules={[{ required: true, message: '填写或删除此项' }]}
+                    >
+                      <DatePicker placeholder="截止日期" />
+                    </Form.Item>
+                    <MinusCircleOutlined
+                      className="dynamic-delete-button"
+                      onClick={() => remove(name)}
+                    />
+                  </Space>
+                </Form.Item>
+              ))}
+              <Form.Item label="添加实验报告">
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  // style={{ width: '60%' }}
+                  icon={<PlusOutlined />}
+                >
+                  添加
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
 
-      <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-          添加课程
-        </Button>
-        <Button style={{ float: 'right' }} htmlType="button" onClick={onReset}>
-          重置
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item {...tailLayout}>
+          <Button type="primary" htmlType="submit">
+            添加课程
+          </Button>
+          <Button
+            style={{ float: 'right' }}
+            htmlType="button"
+            onClick={onReset}
+          >
+            重置
+          </Button>
+        </Form.Item>
+      </Form>
+    </Spin>
   );
 };
 export default AddCourse;

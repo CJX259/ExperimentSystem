@@ -7,7 +7,11 @@ export interface classData {
   uid: string;
   grade?: string;
 }
-
+export interface loading {
+  global: boolean;
+  models: any;
+  effects: any;
+}
 export interface experiment {
   name: string;
   id: string;

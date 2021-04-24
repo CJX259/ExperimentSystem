@@ -33,16 +33,18 @@ export default {
     var cookie = req.headers.cookie || 'nothing';
     var needCookie = getCookie('userToken', cookie);
     if (needCookie != null) {
-      res.send({
-        success: true,
-        data: {
-          name: '蔡云鹭',
-          tid: '1815200059',
-          collegeId: '1',
-          collegeName: '数学与信息科学学院',
-        },
-        msg: 'ok',
-      });
+      setTimeout(() => {
+        res.send({
+          success: true,
+          data: {
+            name: '蔡云鹭',
+            tid: '1815200059',
+            collegeId: '1',
+            collegeName: '数学与信息科学学院',
+          },
+          msg: 'ok',
+        });
+      }, 500);
     } else {
       res.send({ success: false, data: {}, msg: 'cookie认证错误' });
     }
@@ -454,6 +456,33 @@ export default {
     //   data: {},
     //   msg: '提醒失败'
     // })
+  },
+  'GET /api/announcement/getannouncement': (req: any, res: any) => {
+    var cookie = req.headers.cookie || 'nothing';
+    // 后端通过cookie判断一下session有无过期，没有过期就拿所有的公告即可
+    // 目的是防止未登录直接进主页面的时候还能拿到公告
+    var needCookie = getCookie('userToken', cookie);
+    if (needCookie != null) {
+      res.send({
+        success: true,
+        data: {
+          contents: [
+            { id: 1, content: '这是公告1' },
+            {
+              id: 2,
+              content:
+                '教师登录后，首先根据教师号查询课程，然后根据课程号查询班级，根据当前的uid（课程标识）CURD实验，设置实验号验名和截止提交时间（同时为该班级的每一个学生在finish表中设置初始信息），教师可点击实验名查看该班级学生的提交情况（finish-status），根据实际情况进行通知学生提交（message表）、设置该学生的提交权限（finish-com_permit）、下载学生的实验进行评分，对优秀的实验选择是否进行展示',
+            },
+          ],
+        },
+      });
+    } else {
+      res.send({
+        success: false,
+        data: {},
+        msg: '未登录',
+      });
+    }
   },
 };
 const students = getStuData();

@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { IRouteComponentProps, Redirect, Link } from 'umi';
 import { getExperiment, delExperiment } from '@/services/experiment';
-import { Table, Tag, Space, Button, Popconfirm, Modal, message } from 'antd';
+import {
+  Table,
+  Tag,
+  Space,
+  Button,
+  Popconfirm,
+  Modal,
+  message,
+  Spin,
+} from 'antd';
 import { experiment } from '@/type/index';
 import AddExperiment from '@/components/addExperiment';
 import UpdateExperiment from '@/components/updateExperiment';
@@ -18,7 +27,9 @@ function SelectExperiment({ location }: IRouteComponentProps) {
   const [updateExperiment, setUpdateExperiment] = useState({} as experiment);
   const [experiments, setExperiments] = useState([]);
   const [stuCount, setStuCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     getExperiment(courseId, classUid)
       .then((data) => {
         // 对数据进行加工一下
@@ -33,6 +44,9 @@ function SelectExperiment({ location }: IRouteComponentProps) {
       })
       .catch((err) => {
         message.error(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [state]);
 
@@ -170,7 +184,7 @@ function SelectExperiment({ location }: IRouteComponentProps) {
     setUpdateExperiment({} as experiment);
   }
   return (
-    <div>
+    <Spin spinning={loading}>
       <Table
         pagination={false}
         rowKey="id"
@@ -213,7 +227,7 @@ function SelectExperiment({ location }: IRouteComponentProps) {
           hidden={(flag: boolean) => setUpdateVisible(flag)}
         ></UpdateExperiment>
       </Modal>
-    </div>
+    </Spin>
   );
 }
 export default SelectExperiment;
