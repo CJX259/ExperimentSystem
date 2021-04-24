@@ -71,17 +71,16 @@ const PageLayout: React.FC<PageLayout> = ({
     getAnnouncement()
       .then((data) => {
         const contents = data.data.contents || [];
-        let baseConfig = {
-          duration: 0,
-          message: '通知',
-          description: '',
-          icon: <SmileOutlined style={{ color: '#008c8c' }} />,
-        };
         if (contents.length >= 0) {
           for (let i = 0; i < contents.length; i++) {
-            const option = baseConfig;
+            const option = {
+              duration: 0,
+              message: '通知',
+              description: '',
+              top: 65,
+              icon: <SmileOutlined style={{ color: '#008c8c' }} />,
+            };
             option.description = contents[i].content;
-            // options[i].description = contents[i].content;
             notification.open(option);
           }
         }
@@ -90,22 +89,16 @@ const PageLayout: React.FC<PageLayout> = ({
         message.error(err.message);
       });
   }, []);
+  // index页面刷新和login登录进来，都能执行两遍这个useEffect即为成功
   // useEffect(() => {
-  //   console.log("执行effect");
-  // }, [user.id, location.pathname])
-  // 正常登录就不走这里了
-  // useEffect(() => {
-  //   if (!user.tid) {
+  //   if (location.state && location.state.fromLogin) {
+  //     location.state.fromLogin = false;
+  //   }
+  //   if(!user.tid){
   //     return;
   //   }
-  //   getCoursesByTeacher()
-  //     .then((data) => {
-  //       setCourses(data);
-  //     })
-  //     .catch((err: Error) => {
-  //       message.error(err.message);
-  //     });
-  // }, [user.tid])
+  // console.log("执行effect");
+  // }, [user.tid, location.state ? location.state.fromLogin : ""])
   // 确认登出
   const handleLogout = () => {
     logout();

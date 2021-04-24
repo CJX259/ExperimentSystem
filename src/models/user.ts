@@ -43,7 +43,6 @@ const UserModel: UserModelType = {
           message.success('登录成功', 1);
         } else {
           // 登录失败的情况
-          // message.error(data.msg);
           throw new Error(data.msg);
         }
       } catch (err) {
@@ -78,14 +77,10 @@ const UserModel: UserModelType = {
   // 如dispatch(action:{type: 'setUser', payload:{}})
   reducers: {
     setUser(state: UserModelState, action): UserModelState {
-      var name = action.payload.name ? action.payload.name : state.name;
-      var tid = action.payload.tid ? action.payload.tid : state.tid;
-      var collegeId = action.payload
-        ? action.payload.collegeId
-        : state.collegeId;
-      var collegeName = action.payload
-        ? action.payload.collegeName
-        : state.collegeName;
+      var name = action.payload.name ? action.payload.name : '';
+      var tid = action.payload.tid ? action.payload.tid : '';
+      var collegeId = action.payload ? action.payload.collegeId : '';
+      var collegeName = action.payload ? action.payload.collegeName : '';
       return {
         ...state,
         name,
