@@ -71,7 +71,6 @@ const PageLayout: React.FC<PageLayout> = ({
     getAnnouncement()
       .then((data) => {
         const contents = data.data.contents || [];
-        console.log(data);
         let baseConfig = {
           duration: 0,
           message: '通知',
