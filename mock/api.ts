@@ -328,20 +328,23 @@ export default {
       });
     }
   },
-  // 分页通过classId，exp信息拿到学生数据(join操作，再拿到finish表中学生的提交情况)
+  // 分页通过classId，exp信息拿到学生数据
   // 可以添加参数进行筛选，没有接收到该参数就不对该值进行筛选
-  // grade： “优秀”，“良好”，“及格”， “不及格”，“未评分”（未评分是找出grade为null的）
-  // status：0、1
-  // com_permit：0、1
+  // grade： 0、1、2、3、4
+  // status：0、1、或不传
+  // com_permit：0、1、或不传
+  // current：当前页，从1开始
+  // pageSize：一页的学生数据数量
+  // experimentId：当前experimentId
+  // classUiD：当前班级的uid
   // name：暂定
   'GET /api/student/getstudatabypage': (req: any, res: any) => {
-    var experiment = req.query.experiment;
+    var experimentId = req.query.experimentId;
     var classUid = req.query.classUid;
-    // 转化为数字
     // res.send({success: false, data: {}, msg:"学生数据获取失败"});
     var current = +req.query.current || 1;
     var pageSize = +req.query.pageSize || 10;
-    if (!classUid || !experiment) {
+    if (!classUid || !experimentId) {
       res.send({
         success: false,
         data: {},
@@ -357,6 +360,30 @@ export default {
       data: {
         count: 50,
         students: stus,
+        // 'students': [
+        //   {
+        //     id: 1,
+        //     name: 'cjx',
+        //     status: 1,
+        //     grade: 0,
+        //     count: 1,
+        //     isShow: 1,
+        //     com_permit: 1,
+        //     experPath:
+        //       'http://127.0.0.1:8080/%E7%B1%BB%E5%9B%BE%E8%AE%BE%E8%AE%A1.pdf',
+        //   },
+        //   {
+        //     id: 2,
+        //     name: 'cjx2',
+        //     status: 0,
+        //     grade: 0,
+        //     count: 12,
+        //     isShow: 0,
+        //     com_permit: 0,
+        //     experPath:
+        //       'http://127.0.0.1:8080/%E7%B1%BB%E5%9B%BE%E8%AE%BE%E8%AE%A1.pdf',
+        //   },
+        // ],
       },
       msg: 'OK',
     });

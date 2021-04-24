@@ -3,7 +3,7 @@ const Random = mockjs.Random;
 
 Random.extend({
   grade: function () {
-    const grades = ['1', '2', '3', '4', '0'];
+    const grades = [1, 2, 3, 4, 0];
     return this.pick(grades);
   },
 });

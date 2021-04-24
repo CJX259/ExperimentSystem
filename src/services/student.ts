@@ -3,7 +3,7 @@ import { experiment } from '@/type';
 // 分页拿到某个班的学生(需传exp信息，拿到finish表内容拼接)
 export async function getStuByClassByPage(
   classUid: string,
-  experiment: experiment,
+  experimentId: string,
   current: number,
   pageSize: number,
   filters?: any,
@@ -12,7 +12,7 @@ export async function getStuByClassByPage(
     const data = await request('/api/student/getstudatabypage', {
       method: 'GET',
       params: {
-        experiment,
+        experimentId,
         classUid,
         current,
         pageSize,

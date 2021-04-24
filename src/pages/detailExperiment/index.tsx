@@ -6,10 +6,10 @@ import {
   uploadGrade,
   uploadIsShow,
 } from '../../services/student';
-import { delExperiment, downloadExperiment } from '@/services/experiment';
+import { downloadExperiment } from '@/services/experiment';
 import { Table, Tag, Space, Button, message, Tooltip, Modal } from 'antd';
 import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
-import { student, grade } from '@/type/index';
+import { student, grade, experiment } from '@/type/index';
 import { remindSubmit } from '@/services/message';
 import { UserModelState } from '@/models/user';
 // 因为从1开始
@@ -20,7 +20,7 @@ function DetailExperiment({
   user,
 }: IRouteComponentProps & { user: UserModelState }) {
   let state = location.state;
-  var experiment = state.experiment;
+  var experiment: experiment = state.experiment;
   var classUid = state.classUid;
   if (!experiment || !classUid) {
     return <Redirect to="/"></Redirect>;
@@ -40,7 +40,7 @@ function DetailExperiment({
   const [students, setStudents] = useState({ count: 0, students: [] });
   useEffect(() => {
     setLoading(true);
-    getStuByClassByPage(classUid, experiment, page.current, page.pageSize)
+    getStuByClassByPage(classUid, experiment.id, page.current, page.pageSize)
       .then((data) => {
         setStudents(data);
         setLoading(false);
@@ -339,7 +339,7 @@ function DetailExperiment({
     setSelectKeys([]);
     getStuByClassByPage(
       classUid,
-      experiment,
+      experiment.id,
       page.current,
       page.pageSize,
       filters,
