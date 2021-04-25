@@ -8,6 +8,15 @@ export async function getStuByClassByPage(
   pageSize: number,
   filters?: any,
 ) {
+  var newFilter: any = {};
+  for (const key in filters) {
+    if (Object.prototype.hasOwnProperty.call(filters, key)) {
+      const filter = filters[key];
+      if (filter) {
+        newFilter[key] = filter;
+      }
+    }
+  }
   try {
     const data = await request('/api/student/getstudatabypage', {
       method: 'GET',
@@ -16,7 +25,7 @@ export async function getStuByClassByPage(
         classUid,
         current,
         pageSize,
-        ...filters,
+        ...newFilter,
       },
       skipErrorHandler: true,
     });

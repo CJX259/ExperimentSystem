@@ -49,13 +49,23 @@ const PageLayout: React.FC<PageLayout> = ({
   const [courses, setCourses] = useState([]);
   const [courseLoading, setCourseLoading] = useState(false);
   // 使用两个useEffect，分别请求不同的内容（但是如果从login页面正常登录，就无法触发第二个useEffect，因为它依赖于user.tid，正常登录来的user本来就有值）
-  // 防止页面在未登录的情况下（即没有cookie信息），请求所有接口，导致一次报太多错误，以及节省http请求
+  // 解决方法: 让login成功后不设置user,到此页面后再调用loginByCookie来设置user,以达改变user.tid从而触发useEffect目的
+  // 好处: 防止页面在未登录的情况下（即没有cookie信息），请求所有接口，导致一次报太多错误，以及节省http请求
   useEffect(() => {
     try {
       loginByCookie();
     } catch (err) {
       // model那里定义的跳转了。
       message.error(err.message);
+    }
+  }, []);
+  // index页面刷新和login登录进来，都能执行两遍这个useEffect即为成功
+  useEffect(() => {
+    // 没有tid就不请求
+    // 当loginByCookie成功后user.tid改变,触发此副作用函数
+    // 以实现顺序请求的目的!!
+    if (!user.tid) {
+      return;
     }
     setCourseLoading(true);
     getCoursesByTeacher()
@@ -88,17 +98,7 @@ const PageLayout: React.FC<PageLayout> = ({
       .catch((err: Error) => {
         message.error(err.message);
       });
-  }, []);
-  // index页面刷新和login登录进来，都能执行两遍这个useEffect即为成功
-  // useEffect(() => {
-  //   if (location.state && location.state.fromLogin) {
-  //     location.state.fromLogin = false;
-  //   }
-  //   if(!user.tid){
-  //     return;
-  //   }
-  // console.log("执行effect");
-  // }, [user.tid, location.state ? location.state.fromLogin : ""])
+  }, [user.tid]);
   // 确认登出
   const handleLogout = () => {
     logout();

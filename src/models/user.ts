@@ -39,8 +39,8 @@ const UserModel: UserModelType = {
           action.payload.password,
         );
         if (data.success) {
-          yield put({ type: 'setUser', payload: data.data });
-          message.success('登录成功', 1);
+          // yield put({ type: 'setUser', payload: data.data });
+          message.success(data.msg, 1);
         } else {
           // 登录失败的情况
           throw new Error(data.msg);
