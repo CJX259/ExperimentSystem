@@ -1,0 +1,8 @@
+// 加个wrapper包住就不会污染全局
+// .wrapper{
+:global {
+  .ant-table-tbody > tr.ant-table-row-selected > td {
+    background-color: transparent !important;
+  }
+}
+// }

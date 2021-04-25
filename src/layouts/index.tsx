@@ -63,10 +63,10 @@ const PageLayout: React.FC<PageLayout> = ({
   useEffect(() => {
     // 没有tid就不请求
     // 当loginByCookie成功后user.tid改变,触发此副作用函数
-    // 以实现顺序请求的目的!!
-    if (!user.tid) {
-      return;
-    }
+    // 但是问题是打包好后，根本就无法根据user.tid判断，因为就没有user.tid
+    // if (!user.tid) {
+    //   return;
+    // }
     setCourseLoading(true);
     getCoursesByTeacher()
       .then((data) => {
@@ -78,6 +78,9 @@ const PageLayout: React.FC<PageLayout> = ({
       .finally(() => {
         setCourseLoading(false);
       });
+    // if (!user.tid) {
+    //   return;
+    // }
     getAnnouncement()
       .then((data) => {
         const contents = data.data.contents || [];
@@ -98,7 +101,7 @@ const PageLayout: React.FC<PageLayout> = ({
       .catch((err: Error) => {
         message.error(err.message);
       });
-  }, [user.tid]);
+  }, []);
   // 确认登出
   const handleLogout = () => {
     logout();

@@ -12,6 +12,7 @@ import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
 import { student, grade, experiment } from '@/type/index';
 import { remindSubmit } from '@/services/message';
 import { UserModelState } from '@/models/user';
+import styles from './index.less';
 // 因为从1开始
 const gradeMap = ['未评分', '优秀', '良好', '及格', '不及格'];
 // 展示该班级下选了该课程的学生，以及它们实验报告的提交情况
@@ -19,6 +20,7 @@ function DetailExperiment({
   location,
   user,
 }: IRouteComponentProps & { user: UserModelState }) {
+  console.log(styles);
   let state = location.state;
   var experiment: experiment = state.experiment;
   var classUid = state.classUid;
@@ -394,20 +396,6 @@ function DetailExperiment({
       }
     };
   }
-  // index代表使用的timer是第几行的timer
-  // function throttleInRender(this: any, fn: Function, duration: number = 1500, ...args: any) {
-  //   let _this = this;
-  //   return function () {
-  //     let _args = [].concat(...args, arguments as any);
-  //     if (timer == null) {
-  //       fn.apply(_this, _args);
-  //       var temp = setTimeout(() => {
-  //         setTimer(null);
-  //       }, duration);
-  //       setTimer(temp as any);
-  //     }
-  //   }
-  // }
   return (
     <div>
       <div
