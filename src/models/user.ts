@@ -54,6 +54,9 @@ const UserModel: UserModelType = {
         let data = yield call([this, requestLoginByCookie]);
         if (data.success) {
           yield put({ type: 'setUser', payload: data.data });
+          // 登录成功后，请求公告和课程
+          yield put({ type: 'course/getCourseByCookie' });
+          yield put({ type: 'announcement/getAllAnnouncements' });
         } else {
           yield put({ type: 'setUser', payload: {} });
           // 删除原来的cookie

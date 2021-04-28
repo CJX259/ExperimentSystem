@@ -18,15 +18,18 @@ import {
 import { useEffect, useState } from 'react';
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
+import { AnnouncementModelState } from '@/models/announcement';
 import styles from './index.less';
 import { UserModelState } from '@/models/user';
+import { CourseModelState } from '@/models/course';
 import { course, loading } from '@/type/index';
 import { getCoursesByTeacher } from '@/services/course';
-import { getAnnouncement } from '@/services/announcement';
+// import { getAnnouncement } from '@/services/announcement';
 // courseId的值为course的uid！！！！
 interface allDispatchProps {
   loginByCookie: () => void;
   logout: () => void;
+  // getAnnouncements: () => void
 }
 type PageLayout = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
@@ -34,6 +37,9 @@ type PageLayout = ReturnType<typeof mapStateToProps> &
 const PageLayout: React.FC<PageLayout> = ({
   user,
   loading,
+  announcement,
+  course,
+  // getAnnouncements,
   loginByCookie,
   logout,
   children,
@@ -41,16 +47,15 @@ const PageLayout: React.FC<PageLayout> = ({
   route,
   history,
   match,
-}: IRouteComponentProps & { user: UserModelState; loading: loading }) => {
+}: IRouteComponentProps & {
+  user: UserModelState;
+  loading: loading;
+  announcement: AnnouncementModelState;
+}) => {
   // 登录则不要渲染
   if (location.pathname === '/login') {
     return <div>{children}</div>;
   }
-  const [courses, setCourses] = useState([]);
-  const [courseLoading, setCourseLoading] = useState(false);
-  // 使用两个useEffect，分别请求不同的内容（但是如果从login页面正常登录，就无法触发第二个useEffect，因为它依赖于user.tid，正常登录来的user本来就有值）
-  // 解决方法: 让login成功后不设置user,到此页面后再调用loginByCookie来设置user,以达改变user.tid从而触发useEffect目的
-  // 好处: 防止页面在未登录的情况下（即没有cookie信息），请求所有接口，导致一次报太多错误，以及节省http请求
   useEffect(() => {
     try {
       loginByCookie();
@@ -58,49 +63,6 @@ const PageLayout: React.FC<PageLayout> = ({
       // model那里定义的跳转了。
       message.error(err.message);
     }
-  }, []);
-  // index页面刷新和login登录进来，都能执行两遍这个useEffect即为成功
-  useEffect(() => {
-    // 没有tid就不请求
-    // 当loginByCookie成功后user.tid改变,触发此副作用函数
-    // 但是问题是打包好后，根本就无法根据user.tid判断，因为就没有user.tid
-    // if (!user.tid) {
-    //   return;
-    // }
-    setCourseLoading(true);
-    getCoursesByTeacher()
-      .then((data) => {
-        setCourses(data);
-      })
-      .catch((err: Error) => {
-        message.error(err.message);
-      })
-      .finally(() => {
-        setCourseLoading(false);
-      });
-    // if (!user.tid) {
-    //   return;
-    // }
-    getAnnouncement()
-      .then((data) => {
-        const contents = data.data.contents || [];
-        if (contents.length >= 0) {
-          for (let i = 0; i < contents.length; i++) {
-            const option = {
-              duration: 0,
-              message: '通知',
-              description: '',
-              top: 65,
-              icon: <SmileOutlined style={{ color: '#008c8c' }} />,
-            };
-            option.description = contents[i].content;
-            notification.open(option);
-          }
-        }
-      })
-      .catch((err: Error) => {
-        message.error(err.message);
-      });
   }, []);
   // 确认登出
   const handleLogout = () => {
@@ -110,9 +72,27 @@ const PageLayout: React.FC<PageLayout> = ({
   const onCollapse = (collapsed: boolean) => {
     setCollapsed(collapsed);
   };
+  const lookAnnouncements = () => {
+    if (announcement.announcements.length > 0) {
+      var data = announcement.announcements;
+      for (let i = 0; i < data.length; i++) {
+        const option = {
+          // duration: 0,
+          message: '通知',
+          description: '',
+          top: 65,
+          key: '',
+          icon: <SmileOutlined style={{ color: '#008c8c' }} />,
+        };
+        option.description = data[i].content;
+        option.key = data[i].id;
+        notification.open(option);
+      }
+    }
+  };
   return (
     <div className="layout">
-      <Spin spinning={loading.global || courseLoading}>
+      <Spin spinning={loading.models.course}>
         <Layout style={{ minHeight: '100vh' }}>
           <Sider
             theme="light"
@@ -131,7 +111,7 @@ const PageLayout: React.FC<PageLayout> = ({
                 <Link to="/addcourse">添加课程</Link>
               </Menu.Item>
               <SubMenu key="sub1" icon={<TableOutlined />} title="查看课程">
-                {courses.map((course: course) => {
+                {course.courses.map((course: course) => {
                   return (
                     <Menu.Item key={'sub1_' + course.uid}>
                       <Link
@@ -168,8 +148,16 @@ const PageLayout: React.FC<PageLayout> = ({
                 okText="Yes"
                 cancelText="No"
               >
-                <Button className={styles['right-btn']}>退出登录</Button>
+                <Button type="primary" className={styles['right-btn']}>
+                  退出登录
+                </Button>
               </Popconfirm>
+              <Button
+                className={styles['right-btn']}
+                onClick={lookAnnouncements}
+              >
+                查看公告
+              </Button>
             </Header>
             <Content style={{ margin: '0 16px' }}>
               {/* 面包屑 */}
@@ -335,13 +323,19 @@ function isDefault(location: { pathname: string; state: any }): Array<string> {
 function mapStateToProps({
   user,
   loading,
+  announcement,
+  course,
 }: {
   user: UserModelState;
   loading: loading;
+  announcement: AnnouncementModelState;
+  course: CourseModelState;
 }) {
   return {
     user,
     loading,
+    announcement,
+    course,
   };
 }
 function mapDispatchToProps(dispatch: Function): allDispatchProps {
