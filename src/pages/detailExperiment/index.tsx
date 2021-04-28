@@ -20,6 +20,7 @@ function DetailExperiment({
   location,
   user,
 }: IRouteComponentProps & { user: UserModelState }) {
+  // 不输出，umi会自动优化，就不导入index.less了（因为没地方用到里面的属性~）
   console.log(styles);
   let state = location.state;
   var experiment: experiment = state.experiment;
@@ -215,7 +216,7 @@ function DetailExperiment({
   const handleOpenClick = (student: student) => {
     return function () {
       setLoading(true);
-      changePermit(student.id, student.com_permit ? 0 : 1)
+      changePermit(experiment.id, student.id, student.com_permit ? 0 : 1)
         .then(() => {
           message.success('修改成功');
           // 修改前端视图
@@ -247,7 +248,7 @@ function DetailExperiment({
       if (grade !== student.grade) {
         // 发送请求修改分数,不处理展示报告
         setLoading(true);
-        uploadGrade(student.id, grade)
+        uploadGrade(experiment.id, student.id, grade)
           .then((data) => {
             message.success('评分成功');
             // 前端视图更新
@@ -277,7 +278,7 @@ function DetailExperiment({
         return;
       }
       // 处理展示报告,grade不变
-      uploadIsShow(student.id, student.isShow ? 0 : 1)
+      uploadIsShow(experiment.id, student.id, student.isShow ? 0 : 1)
         .then((data) => {
           message.success('设置成功');
           // 前端视图更新

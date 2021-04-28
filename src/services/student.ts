@@ -38,11 +38,16 @@ export async function getStuByClassByPage(
     throw new Error(err);
   }
 }
-export async function changePermit(studentId: string, com_permit: number) {
+export async function changePermit(
+  experimentId: string,
+  studentId: string,
+  com_permit: number,
+) {
   try {
     const data = await request('/api/student/changepermit', {
       method: 'POST',
       params: {
+        experimentId,
         studentId,
         com_permit,
       },
@@ -58,11 +63,16 @@ export async function changePermit(studentId: string, com_permit: number) {
   }
 }
 
-export async function uploadGrade(studentId: string, grade: string) {
+export async function uploadGrade(
+  experimentId: string,
+  studentId: string,
+  grade: string,
+) {
   try {
     const data = await request('/api/student/uploadgrade', {
       method: 'POST',
       params: {
+        experimentId,
         studentId,
         grade,
       },
@@ -77,11 +87,16 @@ export async function uploadGrade(studentId: string, grade: string) {
     throw new Error(err.message);
   }
 }
-export async function uploadIsShow(studentId: string, isShow: number) {
+export async function uploadIsShow(
+  experimentId: string,
+  studentId: string,
+  isShow: number,
+) {
   try {
     const data = await request('/api/student/uploadisshow', {
       method: 'POST',
       params: {
+        experimentId,
         studentId,
         isShow,
       },

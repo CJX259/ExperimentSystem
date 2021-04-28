@@ -392,7 +392,7 @@ export default {
   },
 
   // 修改学生的开启/关闭通道
-  // 参数studentId和com_permit
+  // 参数experimentId, studentId和com_permit
   'POST /api/student/changepermit': (req: any, res: any) => {
     res.send({
       success: true,
@@ -406,7 +406,7 @@ export default {
     // })
   },
   // 修改分数，以及修改是否展示（isShow）
-  // 参数：studentId，grade，
+  // 参数：experimentId,studentId，grade，
   'POST /api/student/uploadgrade': (req: any, res: any) => {
     res.send({
       success: true,
@@ -420,7 +420,7 @@ export default {
     // })
   },
   // 修改isShow
-  // 参数：studentId，isShow
+  // 参数：experimentId,studentId，isShow
   'POST /api/student/uploadisshow': (req: any, res: any) => {
     res.send({
       success: true,
