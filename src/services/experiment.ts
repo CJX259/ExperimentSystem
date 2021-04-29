@@ -78,6 +78,7 @@ export async function updateExperiment(
   id: string,
   name: string,
   deadline: string,
+  submitted: number,
 ) {
   try {
     const data = await request('/api/experiment/updateexperiment', {
@@ -87,6 +88,7 @@ export async function updateExperiment(
         id,
         name,
         deadline,
+        submitted,
       },
     });
     if (data.success) {

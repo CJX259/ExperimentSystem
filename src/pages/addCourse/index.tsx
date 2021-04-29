@@ -16,6 +16,8 @@ import { ReactNode, useEffect, useState } from 'react';
 import { getCoursesByCollege, addCourse } from '@/services/course';
 import { getAllClass } from '@/services/class';
 import { course, classData } from '@/type/index';
+import { connect } from 'umi';
+import { CourseModelState } from '@/models/course';
 const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 10 },
@@ -28,7 +30,7 @@ interface experiment {
   name: string;
   deadline: any;
 }
-const AddCourse = () => {
+const AddCourse = ({ getCourse }: { getCourse: Function }) => {
   const [form] = Form.useForm();
   const onFinish = async (values: { experiments: any }) => {
     // console.log(values);
@@ -44,6 +46,8 @@ const AddCourse = () => {
       const data = await addCourse(values);
       message.success(data.msg);
       form.resetFields();
+      // 重新请求课程信息
+      getCourse();
     } catch (err) {
       message.error(err.message);
     }
@@ -186,4 +190,11 @@ const AddCourse = () => {
     </Spin>
   );
 };
-export default AddCourse;
+function mapDispatchToProps(dispatch: Function) {
+  return {
+    getCourse() {
+      dispatch({ type: 'course/getCourseByCookie' });
+    },
+  };
+}
+export default connect(function () {}, mapDispatchToProps)(AddCourse);

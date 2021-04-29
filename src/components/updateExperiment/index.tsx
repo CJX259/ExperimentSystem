@@ -37,7 +37,12 @@ function UpdateExperiment({
       }
     }
     try {
-      const result = await updateExperiment(data.id, values.name, deadline);
+      const result = await updateExperiment(
+        data.id,
+        values.name,
+        deadline,
+        data.submitted,
+      );
       if (result.success) {
         hidden(false);
         //更新前端视图

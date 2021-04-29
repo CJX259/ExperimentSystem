@@ -71,6 +71,7 @@ export default {
     // res.send({success: false, data: '', msg:"班级查询失败"});
   },
   // 通过cookie，拿到老师对应的学院，然后返回属于该学院的课程
+  // 有可能是该老师教授其他学院的同名课程吗？需要什么数据区分？
   'GET /api/course/getcourses': (req: any, res: any) => {
     res.send({
       success: true,
@@ -299,33 +300,31 @@ export default {
 
   //通过id，修改实验报告,后台可以不用接收uid，但是要返回uid（add要用）
   'POST /api/experiment/updateexperiment': (req: any, res: any) => {
-    if (Math.random() > 0.7) {
-      var name = req.query.name;
-      var deadline = req.query.deadline;
-      var uid = req.query.uid;
-      var id = req.query.id;
-      res.send({
-        success: true,
-        data: {
-          experiments: [
-            {
-              name,
-              uid,
-              id,
-              deadline,
-              submitted: 0, //提交情况要后台重新拿一次
-            },
-          ],
-        },
-        msg: '修改成功',
-      });
-    } else {
-      res.send({
-        success: false,
-        data: {},
-        msg: '修改失败',
-      });
-    }
+    var name = req.query.name;
+    var deadline = req.query.deadline;
+    var uid = req.query.uid;
+    var id = req.query.id;
+    var submitted = req.query.submitted;
+    res.send({
+      success: true,
+      data: {
+        experiments: [
+          {
+            name,
+            uid,
+            id,
+            deadline,
+            submitted,
+          },
+        ],
+      },
+      msg: '修改成功',
+    });
+    // res.send({
+    //   success: false,
+    //   data: {},
+    //   msg: '修改失败',
+    // });
   },
   // 分页通过classId，exp信息拿到学生数据
   // 可以添加参数进行筛选，没有接收到该参数就不对该值进行筛选
