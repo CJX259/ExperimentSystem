@@ -7,7 +7,16 @@ import {
   uploadIsShow,
 } from '../../services/student';
 import { downloadExperiment } from '@/services/experiment';
-import { Table, Tag, Space, Button, message, Tooltip, Modal } from 'antd';
+import {
+  Table,
+  Tag,
+  Space,
+  Button,
+  message,
+  Tooltip,
+  Modal,
+  Input,
+} from 'antd';
 import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
 import { student, grade, experiment } from '@/type/index';
 import { remindSubmit } from '@/services/message';
@@ -41,6 +50,8 @@ function DetailExperiment({
   // 控制table中的节流timer
   const [timer, setTimer] = useState(null);
   const [students, setStudents] = useState({ count: 0, students: [] });
+  const [searchValue, setSearchValue] = useState('');
+  const [searchFilters, setSearchFilters] = useState({});
   useEffect(() => {
     setLoading(true);
     getStuByClassByPage(classUid, experiment.id, page.current, page.pageSize)
@@ -340,13 +351,11 @@ function DetailExperiment({
     // 需要清除多选信息
     setLoading(true);
     setSelectKeys([]);
-    getStuByClassByPage(
-      classUid,
-      experiment.id,
-      page.current,
-      page.pageSize,
-      filters,
-    )
+    setSearchFilters(filters);
+    getStuByClassByPage(classUid, experiment.id, page.current, page.pageSize, {
+      ...filters,
+      name: searchValue,
+    })
       .then((data) => {
         setPage({ ...page, total: data.count });
         setStudents(data);
@@ -416,6 +425,41 @@ function DetailExperiment({
         <span style={{ marginLeft: 8 }}>
           {selectKeys.length !== 0 ? `已选择 ${selectKeys.length} 项` : ''}
         </span>
+        <Input.Search
+          placeholder="搜索学生名字"
+          style={{
+            width: 'auto',
+            float: 'right',
+          }}
+          enterButton={true}
+          //两种做法
+          // 点击搜索再改searchKey
+          // 输入的时候就改searchKey
+          onChange={(e) => {
+            // 给那边筛选的时候，插入name属性
+            setSearchValue(e.target.value);
+          }}
+          onSearch={(value) => {
+            setLoading(true);
+            getStuByClassByPage(classUid, experiment.id, 1, page.pageSize, {
+              ...searchFilters,
+              name: value,
+            })
+              .then((data) => {
+                setPage({
+                  current: 1,
+                  pageSize: page.pageSize,
+                  total: data.count,
+                });
+                setStudents(data);
+                setLoading(false);
+              })
+              .catch((err) => {
+                message.error(err.message);
+                setLoading(false);
+              });
+          }}
+        ></Input.Search>
       </div>
       <Table
         rowSelection={rowSelection}
