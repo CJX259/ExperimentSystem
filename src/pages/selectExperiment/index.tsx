@@ -209,6 +209,7 @@ function SelectExperiment({ location }: IRouteComponentProps) {
       >
         <AddExperiment
           experiments={experiments}
+          classUid={classUid}
           uid={uid}
           updateExperiments={addExperimentInWeb}
           hidden={(flag: boolean) => setAddVisible(flag)}

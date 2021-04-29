@@ -47,6 +47,7 @@ export async function delExperiment(id: string) {
 
 export async function addExperiment(
   uid: string,
+  classUid: string,
   name: string,
   deadline: string,
 ) {
@@ -56,12 +57,12 @@ export async function addExperiment(
       skipErrorHandler: true,
       params: {
         uid,
+        classUid,
         name,
         deadline,
       },
     });
     if (data.success) {
-      message.success(data.msg);
       return data;
     } else {
       // message.error(data.msg || '添加实验报告错误');

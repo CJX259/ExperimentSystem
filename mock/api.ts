@@ -268,36 +268,33 @@ export default {
     }
   },
 
-  //通过name，deadline，uid添加实验报告
+  //通过name，deadline，uid, classUid添加实验报告
   'POST /api/experiment/addexperiment': (req: any, res: any) => {
-    if (Math.random() > 0.7) {
-      var name = req.query.name;
-      var deadline = req.query.deadline;
-      var uid = req.query.uid;
-      res.send({
-        success: true,
-        data: {
-          experiments: [
-            {
-              // 返回同一个uid
-              uid,
-              name,
-              // 随机id
-              id: '1' + new Date().toLocaleString(),
-              deadline,
-              submitted: 0,
-            },
-          ],
-        },
-        msg: '添加成功',
-      });
-    } else {
-      res.send({
-        success: false,
-        data: {},
-        msg: '添加失败',
-      });
-    }
+    var name = req.query.name;
+    var deadline = req.query.deadline;
+    var uid = req.query.uid;
+    res.send({
+      success: true,
+      data: {
+        experiments: [
+          {
+            // 返回同一个uid
+            uid,
+            name,
+            // 随机id
+            id: '1' + new Date().toLocaleString(),
+            deadline,
+            submitted: 0,
+          },
+        ],
+      },
+      msg: '添加成功',
+    });
+    // res.send({
+    //   success: false,
+    //   data: {},
+    //   msg: '添加失败',
+    // });
   },
 
   //通过id，修改实验报告,后台可以不用接收uid，但是要返回uid（add要用）

@@ -15,11 +15,13 @@ function AddExperimentComponent({
   updateExperiments,
   experiments,
   uid,
+  classUid,
 }: {
   experiments: Array<experiment>;
   hidden: Function;
   updateExperiments: Function;
   uid: string;
+  classUid: string;
 }) {
   var finish = async (values: any) => {
     for (var i = 0; i < experiments.length; i++) {
@@ -30,8 +32,9 @@ function AddExperimentComponent({
     }
     var deadline = values.deadline.format('YYYY-MM-DD');
     try {
-      const data = await addExperiment(uid, values.name, deadline);
+      const data = await addExperiment(uid, classUid, values.name, deadline);
       if (data.success) {
+        message.success(data.msg || '添加成功');
         form.resetFields();
         hidden(false);
         //更新前端视图
