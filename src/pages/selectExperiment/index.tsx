@@ -38,6 +38,11 @@ function SelectExperiment({ location }: IRouteComponentProps) {
           item.finish = item.submitted == data.count;
           return item;
         });
+        // 对experiment进行按截止日期排序
+        arr.sort(
+          (a: experiment, b: experiment) =>
+            new Date(a.deadline).getTime() - new Date(b.deadline).getTime(),
+        );
         setExperiments(arr);
         // setUid(arr[0].uid);
         setUid(data.experimentUid);
@@ -154,7 +159,12 @@ function SelectExperiment({ location }: IRouteComponentProps) {
   };
   // 更新前端的实验列表
   function addExperimentInWeb(experiment: never): void {
-    setExperiments([...experiments, experiment]);
+    var arr = [...experiments, experiment];
+    arr.sort(
+      (a: experiment, b: experiment) =>
+        new Date(a.deadline).getTime() - new Date(b.deadline).getTime(),
+    );
+    setExperiments(arr);
   }
   function clickAdd(): void {
     setAddVisible(true);
@@ -180,6 +190,10 @@ function SelectExperiment({ location }: IRouteComponentProps) {
         return item;
       }
     });
+    arr.sort(
+      (a: experiment, b: experiment) =>
+        new Date(a.deadline).getTime() - new Date(b.deadline).getTime(),
+    );
     setExperiments(arr as any);
     // 重置updateExperiment
     setUpdateExperiment({} as experiment);

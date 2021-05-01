@@ -31,7 +31,10 @@ function UpdateExperiment({
       return;
     }
     for (var i = 0; i < experiments.length; i++) {
-      if (experiments[i].name === values.name) {
+      if (
+        experiments[i].name === values.name &&
+        data.id !== experiments[i].id
+      ) {
         message.warning('名字重复，请重新输入');
         return;
       }
