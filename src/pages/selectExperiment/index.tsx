@@ -209,6 +209,7 @@ function SelectExperiment({ location }: IRouteComponentProps) {
       >
         <AddExperiment
           experiments={experiments}
+          courseId={courseId}
           classUid={classUid}
           uid={uid}
           updateExperiments={addExperimentInWeb}

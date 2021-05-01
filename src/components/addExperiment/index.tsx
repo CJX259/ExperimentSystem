@@ -16,12 +16,15 @@ function AddExperimentComponent({
   experiments,
   uid,
   classUid,
+  // 其实是courseUid
+  courseId,
 }: {
   experiments: Array<experiment>;
   hidden: Function;
   updateExperiments: Function;
   uid: string;
   classUid: string;
+  courseId: string;
 }) {
   var finish = async (values: any) => {
     for (var i = 0; i < experiments.length; i++) {
@@ -32,7 +35,13 @@ function AddExperimentComponent({
     }
     var deadline = values.deadline.format('YYYY-MM-DD');
     try {
-      const data = await addExperiment(uid, classUid, values.name, deadline);
+      const data = await addExperiment(
+        courseId,
+        uid,
+        classUid,
+        values.name,
+        deadline,
+      );
       if (data.success) {
         message.success(data.msg || '添加成功');
         form.resetFields();

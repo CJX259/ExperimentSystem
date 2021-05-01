@@ -46,6 +46,7 @@ export async function delExperiment(id: string) {
 }
 
 export async function addExperiment(
+  courseUid: string,
   uid: string,
   classUid: string,
   name: string,
@@ -56,6 +57,7 @@ export async function addExperiment(
       method: 'POST',
       skipErrorHandler: true,
       params: {
+        courseUid,
         uid,
         classUid,
         name,

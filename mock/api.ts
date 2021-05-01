@@ -269,7 +269,7 @@ export default {
     }
   },
 
-  //通过name，deadline，uid, classUid添加实验报告
+  //通过name，deadline，uid, classUid添加实验报告(补充courseUid)
   'POST /api/experiment/addexperiment': (req: any, res: any) => {
     var name = req.query.name;
     var deadline = req.query.deadline;
