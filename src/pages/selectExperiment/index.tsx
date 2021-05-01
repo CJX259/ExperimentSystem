@@ -39,7 +39,8 @@ function SelectExperiment({ location }: IRouteComponentProps) {
           return item;
         });
         setExperiments(arr);
-        setUid(arr[0].uid);
+        // setUid(arr[0].uid);
+        setUid(data.experimentUid);
         setStuCount(data.count);
       })
       .catch((err) => {

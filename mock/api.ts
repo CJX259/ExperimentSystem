@@ -178,6 +178,7 @@ export default {
         data: {
           // count是班级人数（即实验报告需要提交的人数）
           count: 60,
+          experimentUid: '1-2-1',
           experiments: [
             {
               uid: '1-2-1',
