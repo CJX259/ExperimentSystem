@@ -169,7 +169,8 @@ const PageLayout: React.FC<PageLayout> = ({
                       state: {},
                     }}
                   >
-                    {user.name}
+                    {/* {user.name} */}
+                    主界面
                   </Link>
                 </Breadcrumb.Item>
                 {(function () {

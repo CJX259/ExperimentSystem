@@ -430,6 +430,7 @@ export default {
     //   msg: '修改失败'
     // })
   },
+  // 参数有路径和studentId和experimentId
   'GET /api/experiment/download': (req: any, res: any) => {
     res.send({
       success: true,
@@ -442,6 +443,7 @@ export default {
   // 提醒该experiment的班级的学生提交实验报告
   // 通过experimentId和classUid中的所有stuId，拿到finish表的数据，拿到提交状态，筛选出未提交的学生
   // 给未提交的学生发送信息（插入信息到message表中）
+  // 补充参数courseName
   'POST /api/message/remindsubmit': (req: any, res: any) => {
     res.send({
       success: true,

@@ -106,13 +106,18 @@ export async function updateExperiment(
   }
 }
 
-// 只传路径
-export async function downloadExperiment(experPath: string) {
+export async function downloadExperiment(
+  studentId: string,
+  experimentId: string,
+  experPath: string,
+) {
   try {
     const data = await request('/api/experiment/download', {
       method: 'GET',
       params: {
         experPath,
+        studentId,
+        experimentId,
       },
       skipErrorHandler: true,
     });

@@ -34,6 +34,7 @@ function DetailExperiment({
   let state = location.state;
   var experiment: experiment = state.experiment;
   var classUid = state.classUid;
+  var courseName = state.courseName;
   if (!experiment || !classUid) {
     return <Redirect to="/"></Redirect>;
   }
@@ -315,7 +316,7 @@ function DetailExperiment({
   // 处理下载
   const handleDownload = (student: student) => {
     return function () {
-      downloadExperiment(student.experPath)
+      downloadExperiment(student.id, experiment.id, student.experPath)
         .then((data) => {
           console.log(data);
         })
@@ -331,7 +332,7 @@ function DetailExperiment({
       for (let i = 0; i < students.students.length; i++) {
         let stu = students.students[i] as student;
         if (stu.id == studentId) {
-          downloadExperiment(stu.experPath)
+          downloadExperiment(stu.id, experiment.id, stu.experPath)
             .then((data) => {
               console.log(data);
             })
@@ -367,7 +368,7 @@ function DetailExperiment({
       });
   };
   function remindStudent(this: any) {
-    remindSubmit(user.tid, classUid, experiment.id)
+    remindSubmit(user.tid, classUid, experiment.id, courseName)
       .then((data) => {
         message.success(data.msg, 0.5);
       })

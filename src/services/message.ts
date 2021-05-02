@@ -5,6 +5,7 @@ export async function remindSubmit(
   teacherId: string,
   classUid: string,
   experimentId: string,
+  courseName: string,
 ) {
   try {
     const data = await request('/api/message/remindsubmit', {
@@ -13,6 +14,7 @@ export async function remindSubmit(
         teacherId,
         classUid,
         experimentId,
+        courseName,
       },
       skipErrorHandler: true,
     });
