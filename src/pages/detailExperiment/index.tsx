@@ -317,8 +317,8 @@ function DetailExperiment({
   const handleDownload = (student: student) => {
     return function () {
       downloadExperiment(student.id, experiment.id, student.experPath)
-        .then((data) => {
-          console.log(data);
+        .then(() => {
+          // console.log(data);
         })
         .catch((err: Error) => {
           message.error(err.message);
@@ -333,8 +333,8 @@ function DetailExperiment({
         let stu = students.students[i] as student;
         if (stu.id == studentId) {
           downloadExperiment(stu.id, experiment.id, stu.experPath)
-            .then((data) => {
-              console.log(data);
+            .then(() => {
+              // console.log(data);
             })
             .catch((err: Error) => {
               message.error(err.message + ' in student ' + stu.name);

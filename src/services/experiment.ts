@@ -112,20 +112,28 @@ export async function downloadExperiment(
   experPath: string,
 ) {
   try {
-    const data = await request('/api/experiment/download', {
-      method: 'GET',
-      params: {
-        experPath,
-        studentId,
-        experimentId,
-      },
-      skipErrorHandler: true,
-    });
-    if (data.success) {
-      return data;
-    } else {
-      throw new Error(data.msg);
-    }
+    // const data = await request('/api/experiment/download', {
+    //   method: 'POST',
+    //   params: {
+    //     experPath,
+    //     studentId,
+    //     experimentId,
+    //   },
+    //   skipErrorHandler: true,
+    // });
+
+    const a = document.createElement('a');
+    a.setAttribute(
+      'href',
+      `/api/experiment/download?experPath=${experPath}&studentId=${studentId}&experimentId=${experimentId}`,
+    );
+    // a.setAttribute('download', '');
+    a.click();
+    // if (data.success) {
+    //   return data;
+    // } else {
+    //   throw new Error(data.msg);
+    // }
   } catch (err) {
     throw new Error(err);
   }
