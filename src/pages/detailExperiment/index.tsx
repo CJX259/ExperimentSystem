@@ -6,7 +6,10 @@ import {
   uploadGrade,
   uploadIsShow,
 } from '../../services/student';
-import { downloadExperiment } from '@/services/experiment';
+import {
+  downloadExperiment,
+  polyDownloadExperiment,
+} from '@/services/experiment';
 import {
   Table,
   Tag,
@@ -316,7 +319,7 @@ function DetailExperiment({
   // 处理下载
   const handleDownload = (student: student) => {
     return function () {
-      downloadExperiment(student.id, experiment.id, student.experPath)
+      downloadExperiment(student.id, experiment.id)
         .then(() => {
           // console.log(data);
         })
@@ -326,24 +329,32 @@ function DetailExperiment({
     };
   };
   // 处理批量下载
+
   const handleMuchDownload = () => {
-    selectKeys.forEach((studentId: string) => {
-      // 通过学生id，在学生数组中找到一致的项，再拿到路径
-      for (let i = 0; i < students.students.length; i++) {
-        let stu = students.students[i] as student;
-        if (stu.id == studentId) {
-          downloadExperiment(stu.id, experiment.id, stu.experPath)
-            .then(() => {
-              // console.log(data);
-            })
-            .catch((err: Error) => {
-              message.error(err.message + ' in student ' + stu.name);
-            });
-          // for完成，继续执行forEach
-          break;
-        }
-      }
-    });
+    polyDownloadExperiment(experiment.id, selectKeys)
+      .then((_) => {
+        //
+      })
+      .catch((err: Error) => {
+        message.error(err.message);
+      });
+    // selectKeys.forEach((studentId: string) => {
+    //   // 通过学生id，在学生数组中找到一致的项，再拿到路径
+    //   for (let i = 0; i < students.students.length; i++) {
+    //     let stu = students.students[i] as student;
+    //     if (stu.id == studentId) {
+    //       downloadExperiment(stu.id, experiment.id)
+    //         .then(() => {
+    //           // console.log(data);
+    //         })
+    //         .catch((err: Error) => {
+    //           message.error(err.message + ' in student ' + stu.name);
+    //         });
+    //       // for完成，继续执行forEach
+    //       break;
+    //     }
+    //   }
+    // });
   };
   // 当table状态改变时触发，传值是此表格下一个数据，以及表格中筛选和排序的信息
   // （翻页，点击筛选条件都会触发）

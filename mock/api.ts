@@ -438,6 +438,15 @@ export default {
       msg: 'OK',
     });
   },
+  // 批量下载
+  // 参数为experimentId和studentId数组
+  'GET /api/experiment/polydownload': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: 'ok',
+    });
+  },
 
   // message部分
   // 提醒该experiment的班级的学生提交实验报告

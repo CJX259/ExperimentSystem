@@ -109,31 +109,31 @@ export async function updateExperiment(
 export async function downloadExperiment(
   studentId: string,
   experimentId: string,
-  experPath: string,
 ) {
   try {
-    // const data = await request('/api/experiment/download', {
-    //   method: 'POST',
-    //   params: {
-    //     experPath,
-    //     studentId,
-    //     experimentId,
-    //   },
-    //   skipErrorHandler: true,
-    // });
-
     const a = document.createElement('a');
     a.setAttribute(
       'href',
-      `/api/experiment/download?experPath=${experPath}&studentId=${studentId}&experimentId=${experimentId}`,
+      `/api/experiment/download?&studentId=${studentId}&experimentId=${experimentId}`,
     );
-    // a.setAttribute('download', '');
     a.click();
-    // if (data.success) {
-    //   return data;
-    // } else {
-    //   throw new Error(data.msg);
-    // }
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+export async function polyDownloadExperiment(
+  experimentId: string,
+  studentsId: Array<string>,
+) {
+  try {
+    const a = document.createElement('a');
+    let url = `/api/experiment/polydownload?experimentId=${experimentId}`;
+    studentsId.forEach((id: string) => {
+      url += `&studentId=${id}`;
+    });
+    a.setAttribute('href', url);
+    a.click();
   } catch (err) {
     throw new Error(err);
   }
