@@ -439,7 +439,7 @@ export default {
     });
   },
   // 批量下载
-  // 参数为experimentId和studentId数组
+  // 参数为experimentId和studentId数组，experimentName，className
   'GET /api/experiment/polydownload': (req: any, res: any) => {
     res.send({
       success: true,

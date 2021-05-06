@@ -37,6 +37,7 @@ function DetailExperiment({
   let state = location.state;
   var experiment: experiment = state.experiment;
   var classUid = state.classUid;
+  var className = state.className;
   var courseName = state.courseName;
   if (!experiment || !classUid) {
     return <Redirect to="/"></Redirect>;
@@ -331,7 +332,12 @@ function DetailExperiment({
   // 处理批量下载
 
   const handleMuchDownload = () => {
-    polyDownloadExperiment(experiment.id, selectKeys)
+    polyDownloadExperiment(
+      experiment.id,
+      selectKeys,
+      experiment.name,
+      className,
+    )
       .then((_) => {
         //
       })

@@ -125,10 +125,12 @@ export async function downloadExperiment(
 export async function polyDownloadExperiment(
   experimentId: string,
   studentsId: Array<string>,
+  experimentName: string,
+  className: string,
 ) {
   try {
     const a = document.createElement('a');
-    let url = `/api/experiment/polydownload?experimentId=${experimentId}`;
+    let url = `/api/experiment/polydownload?experimentId=${experimentId}&experimentName=${experimentName}&className=${className}`;
     studentsId.forEach((id: string) => {
       url += `&studentId=${id}`;
     });
