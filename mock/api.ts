@@ -491,5 +491,19 @@ export default {
       });
     }
   },
+  // 参数为oldPassword和newPassword，
+  // 后端通过cookie拿到修改的老师
+  'POST /api/teacher/updatepassword': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: '修改成功',
+    });
+    // res.send({
+    //   success: false,
+    //   data: {},
+    //   msg: '修改失败'
+    // })
+  },
 };
 const students = getStuData();

@@ -227,6 +227,9 @@ function DetailExperiment({
   const rowSelection = {
     selectedRowKeys: selectKeys,
     onChange: onSelectChange,
+    getCheckboxProps: (record: student) => ({
+      disabled: record.status == 0, // Column configuration not to be checked
+    }),
   };
   // 开启/关闭通道
   const handleOpenClick = (student: student) => {
