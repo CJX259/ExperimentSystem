@@ -124,16 +124,19 @@ export async function downloadExperiment(
 
 export async function polyDownloadExperiment(
   experimentId: string,
-  studentsId: Array<string>,
   experimentName: string,
   className: string,
+  studentsId?: Array<string>,
 ) {
   try {
     const a = document.createElement('a');
     let url = `/api/experiment/polydownload?experimentId=${experimentId}&experimentName=${experimentName}&className=${className}`;
-    studentsId.forEach((id: string) => {
-      url += `&studentId=${id}`;
-    });
+    // 传了studentId就拼接，只下载那些，不传则下载全部
+    if (studentsId) {
+      studentsId.forEach((id: string) => {
+        url += `&studentId=${id}`;
+      });
+    }
     a.setAttribute('href', url);
     a.click();
   } catch (err) {

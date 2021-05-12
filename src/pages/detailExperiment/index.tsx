@@ -337,9 +337,9 @@ function DetailExperiment({
   const handleMuchDownload = () => {
     polyDownloadExperiment(
       experiment.id,
-      selectKeys,
       experiment.name,
       className,
+      selectKeys,
     )
       .then((_) => {
         //
@@ -347,23 +347,13 @@ function DetailExperiment({
       .catch((err: Error) => {
         message.error(err.message);
       });
-    // selectKeys.forEach((studentId: string) => {
-    //   // 通过学生id，在学生数组中找到一致的项，再拿到路径
-    //   for (let i = 0; i < students.students.length; i++) {
-    //     let stu = students.students[i] as student;
-    //     if (stu.id == studentId) {
-    //       downloadExperiment(stu.id, experiment.id)
-    //         .then(() => {
-    //           // console.log(data);
-    //         })
-    //         .catch((err: Error) => {
-    //           message.error(err.message + ' in student ' + stu.name);
-    //         });
-    //       // for完成，继续执行forEach
-    //       break;
-    //     }
-    //   }
-    // });
+  };
+  const handleAllDownload = () => {
+    polyDownloadExperiment(experiment.id, experiment.name, className).catch(
+      (err: Error) => {
+        message.error(err.message);
+      },
+    );
   };
   // 当table状态改变时触发，传值是此表格下一个数据，以及表格中筛选和排序的信息
   // （翻页，点击筛选条件都会触发）
@@ -446,6 +436,9 @@ function DetailExperiment({
         <span style={{ marginLeft: 8 }}>
           {selectKeys.length !== 0 ? `已选择 ${selectKeys.length} 项` : ''}
         </span>
+        <Button style={{ marginLeft: 8 }} onClick={throttle(handleAllDownload)}>
+          全部下载
+        </Button>
         <Input.Search
           placeholder="搜索学生名字"
           style={{
