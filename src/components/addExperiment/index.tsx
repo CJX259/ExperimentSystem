@@ -35,7 +35,6 @@ function AddExperimentComponent({
     }
     var deadline = values.deadline.format('YYYY-MM-DD');
     try {
-      console.log(uid);
       const data = await addExperiment(
         courseId,
         uid,

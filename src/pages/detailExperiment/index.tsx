@@ -49,7 +49,7 @@ function DetailExperiment({
   // 预览modal
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
-  const [page, setPage] = useState({ pageSize: 7, current: 1, total: 0 });
+  const [page, setPage] = useState({ pageSize: 5, current: 1, total: 0 });
   // 控制table中的节流timer数组(看下单个timer能不能行，不行就用数组的)
   // const [timers, setTimers] = useState(new Array(page.pageSize).fill(null));
   // 控制table中的节流timer
