@@ -270,7 +270,9 @@ const PageLayout: React.FC<PageLayout> = ({
                   var pathname = location.pathname;
                   if (pathname == '/detailexperiment') {
                     var state = location.state || {};
-                    var experimentName = state.experiment.name;
+                    var experimentName = state.experiment
+                      ? state.experiment.name
+                      : '';
                     return <Breadcrumb.Item>{experimentName}</Breadcrumb.Item>;
                   }
                 })()}

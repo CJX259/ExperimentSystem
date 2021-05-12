@@ -362,6 +362,17 @@ function DetailExperiment({
     // 需要清除多选信息
     setLoading(true);
     setSelectKeys([]);
+    // status和com_permit如果选了多个，就默认没选（因为只有两项，当两个条件都筛时等同于没有筛选条件）
+    for (const key in filters) {
+      if (Object.prototype.hasOwnProperty.call(filters, key)) {
+        if (key != 'grade') {
+          const arr = filters[key];
+          if (arr && arr.length >= 2) {
+            filters[key] = null;
+          }
+        }
+      }
+    }
     setSearchFilters(filters);
     getStuByClassByPage(classUid, experiment.id, page.current, page.pageSize, {
       ...filters,
