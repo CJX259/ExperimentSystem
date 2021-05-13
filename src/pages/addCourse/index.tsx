@@ -197,4 +197,6 @@ function mapDispatchToProps(dispatch: Function) {
     },
   };
 }
-export default connect(function () {}, mapDispatchToProps)(AddCourse);
+export default connect(function () {
+  return {};
+}, mapDispatchToProps)(AddCourse);

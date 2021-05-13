@@ -35,7 +35,7 @@ const UserModel: UserModelType = {
       try {
         let data = yield call(
           [this, requestLogin],
-          action.payload.name,
+          action.payload.teacherId,
           action.payload.password,
         );
         if (data.success) {
@@ -95,11 +95,11 @@ const UserModel: UserModelType = {
   },
 };
 
-async function requestLogin(name: string, password: string) {
+async function requestLogin(teacherId: string, password: string) {
   const data = await request('/api/teacher/login', {
     method: 'post',
     params: {
-      name: name,
+      teacherId,
       password: password,
     },
     skipErrorHandler: true,

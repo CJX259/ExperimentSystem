@@ -2,9 +2,9 @@ import { getCookie } from '../src/utils';
 import { getStuData } from './index';
 export default {
   'POST /api/teacher/login': (req: any, res: any) => {
-    var name = req.query.name;
+    var teacherId = req.query.teacherId;
     var password = req.query.password;
-    if (name == '蔡云鹭' && password == '123123') {
+    if (teacherId == '001' && password == '123123') {
       // 设置登录成功cookie
       // 注意path，否则前端无法获取
       res.setHeader(
@@ -14,8 +14,8 @@ export default {
       res.send({
         success: true,
         data: {
-          name,
-          tid: '1815200059',
+          name: '蔡云鹭',
+          tid: teacherId,
           collegeId: '1',
           collegeName: '数学与信息科学学院',
         },

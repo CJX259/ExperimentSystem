@@ -31,9 +31,9 @@ const Login: React.FC<LoginReduxType> = ({ user, login, loading }) => {
   if (document.cookie.indexOf('userToken') !== -1) {
     return <Redirect to="/" />;
   }
-  var onFinish = (values: { username: string; password: string }) => {
+  var onFinish = (values: { teacherId: string; password: string }) => {
     try {
-      login(values.username, values.password);
+      login(values.teacherId, values.password);
     } catch (err) {
       message.error(err.message);
     }
@@ -45,12 +45,12 @@ const Login: React.FC<LoginReduxType> = ({ user, login, loading }) => {
           <h1 style={{ textAlign: 'center' }}>教师端登录</h1>
           <Form name="normal_login" className="login-form" onFinish={onFinish}>
             <Form.Item
-              name="username"
-              rules={[{ required: true, message: '必须输入用户名！' }]}
+              name="teacherId"
+              rules={[{ required: true, message: '必须输入教师id！' }]}
             >
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="请输入用户名"
+                placeholder="请输入教师id"
               />
             </Form.Item>
             <Form.Item
@@ -79,10 +79,10 @@ Login.defaultProps = DefaultProps;
 
 function mapDispatchToProps(dispatch: Function): UserDispatchProps {
   return {
-    login(name: string, password: string) {
+    login(teacherId: string, password: string) {
       dispatch({
         type: 'user/login',
-        payload: { name, password },
+        payload: { teacherId, password },
       });
     },
   };
