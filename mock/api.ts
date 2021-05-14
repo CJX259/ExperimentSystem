@@ -358,6 +358,7 @@ export default {
       success: true,
       data: {
         count: 50,
+        baseUrl: 'baseUrlXxx',
         students: stus,
         // 'students': [
         //   {

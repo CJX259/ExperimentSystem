@@ -57,11 +57,13 @@ function DetailExperiment({
   const [students, setStudents] = useState({ count: 0, students: [] });
   const [searchValue, setSearchValue] = useState('');
   const [searchFilters, setSearchFilters] = useState({});
+  const [baseUrl, setBaseUrl] = useState('');
   useEffect(() => {
     setLoading(true);
     getStuByClassByPage(classUid, experiment.id, page.current, page.pageSize)
       .then((data) => {
         setStudents(data);
+        setBaseUrl(data.baseUrl);
         setLoading(false);
       })
       .catch((err) => {
@@ -128,44 +130,50 @@ function DetailExperiment({
               onClick={handlePreview(record)}
               style={{ fontSize: '12px' }}
               size="small"
+              disabled={record.status === 0}
             >
               预览
             </Button>
-
-            <Tooltip
-              trigger="click"
-              overlayStyle={{
-                maxWidth: '600px',
-              }}
-              title={
-                <Space>
-                  {gradeMap.map((grade: string, i: number) => {
-                    return (
-                      <Button
-                        // 传‘1’代表优秀，是grade的1
-                        onClick={handleGrade((i + '') as grade, record)}
-                        type={record.grade == i + '' ? 'primary' : 'default'}
-                        size="small"
-                        key={grade}
-                      >
-                        {grade}
-                      </Button>
-                    );
-                  })}
-                  <Button
-                    onClick={throttle(handleIsShow(record), true, 500)}
-                    type={record.isShow ? 'primary' : 'default'}
-                    size="small"
-                  >
-                    公开展示报告
-                  </Button>
-                </Space>
-              }
-            >
-              <Button style={{ fontSize: '12px' }} size="small">
+            {record.status === 0 ? (
+              <Button disabled style={{ fontSize: '12px' }} size="small">
                 评分
               </Button>
-            </Tooltip>
+            ) : (
+              <Tooltip
+                trigger="click"
+                overlayStyle={{
+                  maxWidth: '600px',
+                }}
+                title={
+                  <Space>
+                    {gradeMap.map((grade: string, i: number) => {
+                      return (
+                        <Button
+                          // 传‘1’代表优秀，是grade的1
+                          onClick={handleGrade((i + '') as grade, record)}
+                          type={record.grade == i + '' ? 'primary' : 'default'}
+                          size="small"
+                          key={grade}
+                        >
+                          {grade}
+                        </Button>
+                      );
+                    })}
+                    <Button
+                      onClick={throttle(handleIsShow(record), true, 500)}
+                      type={record.isShow ? 'primary' : 'default'}
+                      size="small"
+                    >
+                      公开展示报告
+                    </Button>
+                  </Space>
+                }
+              >
+                <Button style={{ fontSize: '12px' }} size="small">
+                  评分
+                </Button>
+              </Tooltip>
+            )}
           </Space>
         );
       },
@@ -196,6 +204,7 @@ function DetailExperiment({
       render(record: student) {
         return (
           <Button
+            disabled={record.status === 0}
             type="primary"
             style={{ fontSize: '12px' }}
             shape="round"
@@ -214,7 +223,7 @@ function DetailExperiment({
   // 处理打开预览
   const handlePreview = (student: student) => {
     return function () {
-      setPreviewUrl(student.experPath);
+      setPreviewUrl(baseUrl + student.experPath);
       setPreviewVisible(true);
     };
   };
