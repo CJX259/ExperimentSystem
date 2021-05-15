@@ -223,7 +223,8 @@ function DetailExperiment({
   // 处理打开预览
   const handlePreview = (student: student) => {
     return function () {
-      setPreviewUrl(baseUrl + student.experPath);
+      setPreviewUrl(baseUrl + '/' + student.experPath);
+      console.log(baseUrl + '/' + student.experPath);
       setPreviewVisible(true);
     };
   };
