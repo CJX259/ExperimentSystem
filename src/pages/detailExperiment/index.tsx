@@ -224,7 +224,6 @@ function DetailExperiment({
   const handlePreview = (student: student) => {
     return function () {
       setPreviewUrl(baseUrl + '/' + student.experPath);
-      console.log(baseUrl + '/' + student.experPath);
       setPreviewVisible(true);
     };
   };
