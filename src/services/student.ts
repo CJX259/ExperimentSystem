@@ -111,3 +111,33 @@ export async function uploadIsShow(
     throw new Error(err.message);
   }
 }
+export async function getStudentAndExperimentByPage(
+  courseId: string,
+  classUid: String,
+  pageSize: Number,
+  current: Number,
+  name?: String,
+  score?: Number,
+) {
+  try {
+    const data = await request('/api/student/getstudentandexperimentbypage', {
+      skipErrorHandler: true,
+      method: 'GET',
+      params: {
+        courseId,
+        classUid,
+        pageSize,
+        current,
+        name,
+        score,
+      },
+    });
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.msg);
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}

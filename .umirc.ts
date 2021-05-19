@@ -53,6 +53,12 @@ export default defineConfig({
         },
         {
           exact: true,
+          path: '/rating',
+          component: '@/pages/rating',
+          wrappers: ['@/wrappers/haveLocationState'],
+        },
+        {
+          exact: true,
           path: '/updatepassword',
           component: '@/pages/updatePassword',
         },

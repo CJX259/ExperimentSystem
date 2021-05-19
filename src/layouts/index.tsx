@@ -235,6 +235,24 @@ const PageLayout: React.FC<PageLayout> = ({
                           </Link>
                         </Breadcrumb.Item>
                       );
+                    case '/rating':
+                      var state = location.state || {};
+                      var courseName = state.courseName || '';
+                      return (
+                        <Breadcrumb.Item>
+                          <Link
+                            to={{
+                              pathname: '/selectcourse',
+                              state: {
+                                courseId: state.courseId,
+                                courseName: state.courseName,
+                              },
+                            }}
+                          >
+                            {courseName}
+                          </Link>
+                        </Breadcrumb.Item>
+                      );
                     default:
                       break;
                   }
@@ -243,7 +261,8 @@ const PageLayout: React.FC<PageLayout> = ({
                   var pathname = location.pathname;
                   if (
                     pathname == '/selectexperiment' ||
-                    pathname == '/detailexperiment'
+                    pathname == '/detailexperiment' ||
+                    pathname == '/rating'
                   ) {
                     var state = location.state || {};
                     var className = state.className;
@@ -268,6 +287,7 @@ const PageLayout: React.FC<PageLayout> = ({
                 })()}
                 {(function () {
                   var pathname = location.pathname;
+                  // 评分界面比查看界面少一层，所以不用加了
                   if (pathname == '/detailexperiment') {
                     var state = location.state || {};
                     var experimentName = state.experiment

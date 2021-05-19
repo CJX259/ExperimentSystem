@@ -506,5 +506,45 @@ export default {
     //   msg: '修改失败'
     // })
   },
+  'GET /api/student/getstudentandexperimentbypage': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {
+        count: 10,
+        students: [
+          {
+            id: '1',
+            name: '陈建希',
+            gradeMap: {
+              '1': 1,
+              '2': 4,
+              '3': 4,
+              '4': 3,
+            },
+            score: 0,
+          },
+        ],
+        experiments: [
+          {
+            id: '1',
+            name: '实验报告1',
+          },
+          {
+            id: '2',
+            name: '实验报告2',
+          },
+          {
+            id: '3',
+            name: '实验报告3',
+          },
+          {
+            id: '4',
+            name: '实验报告4',
+          },
+        ],
+      },
+      msg: '查询成功',
+    });
+  },
 };
 const students = getStuData();

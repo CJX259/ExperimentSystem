@@ -28,9 +28,6 @@ export type LoginReduxType = ReturnType<typeof mapStateToProps> &
 
 //函数组件, 并对其props约束
 const Login: React.FC<LoginReduxType> = ({ user, login, loading }) => {
-  if (document.cookie.indexOf('userToken') !== -1) {
-    return <Redirect to="/" />;
-  }
   var onFinish = (values: { teacherId: string; password: string }) => {
     try {
       login(values.teacherId, values.password);

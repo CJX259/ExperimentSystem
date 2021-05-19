@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IRouteComponentProps, Redirect, connect } from 'umi';
 import {
   getStuByClassByPage,
@@ -35,10 +35,10 @@ function DetailExperiment({
   // 不输出，umi会自动优化，就不导入index.less了（因为没地方用到里面的属性~）
   console.log(styles);
   let state = location.state;
-  var experiment: experiment = state.experiment;
-  var classUid = state.classUid;
-  var className = state.className;
-  var courseName = state.courseName;
+  let experiment: experiment = state.experiment;
+  let classUid = state.classUid;
+  let className = state.className;
+  let courseName = state.courseName;
   if (!experiment || !classUid) {
     return <Redirect to="/"></Redirect>;
   }
