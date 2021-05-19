@@ -1,10 +1,15 @@
 .wrapper {
   height: 100vh;
   width: 100vw;
-  background: url('../../../public/bg.jpeg');
+  background: url('../../../public/bg.jpg');
   background-size: cover;
   position: relative;
+
   #login {
+    > h1,
+    h2 {
+      color: #000;
+    }
     width: 400px;
     height: 250px;
     // background-color: #eee;
@@ -19,26 +24,27 @@
     margin: auto;
     border-radius: 10px;
     overflow: hidden;
+    // transform: translateY(-50px);
     z-index: 1;
-    // &::before {
-    //   content: '';
-    //   position: absolute;
-    //   /* 确保伪元素铺满content */
-    //   top: -30px;
-    //   left: -30px;
-    //   right: -30px;
-    //   bottom: -30px;
-    //   /* 设置伪元素的背景，最重要的是设置背景图片的位置是视口固定 */
-    //   /* 其他的设置直接照抄container的设置，否则可能导致不重合 */
-    //   background-image: url('../../../public/bg.jpeg');
-    //   background-position: center top;
-    //   background-size: cover;
-    //   background-attachment: fixed;
-    //   /* 让伪元素模糊化 */
-    //   filter: blur(20px);
-    //   /* 降低伪元素的层级，让伪元素在content的下面展现 */
-    //   z-index: -1;
-    // }
+    &::before {
+      content: '';
+      position: absolute;
+      /* 确保伪元素铺满content */
+      top: -30px;
+      left: -30px;
+      right: -30px;
+      bottom: -30px;
+      /* 设置伪元素的背景，最重要的是设置背景图片的位置是视口固定 */
+      /* 其他的设置直接照抄container的设置，否则可能导致不重合 */
+      background-image: url('../../../public/bg.jpg');
+      background-position: center top;
+      background-size: cover;
+      background-attachment: fixed;
+      /* 让伪元素模糊化 */
+      filter: blur(7px);
+      /* 降低伪元素的层级，让伪元素在content的下面展现 */
+      z-index: -1;
+    }
   }
   .row-center {
     position: absolute;

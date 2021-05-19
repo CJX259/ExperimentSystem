@@ -42,7 +42,8 @@ const Login: React.FC<LoginReduxType> = ({ user, login, loading }) => {
     <Spin spinning={loading.global}>
       <div className={styles.wrapper}>
         <div id={styles.login}>
-          <h1 style={{ textAlign: 'center' }}>教师端登录</h1>
+          {/* <h1 style={{ textAlign: 'center' }}>广州大学实验报告上传系统</h1> */}
+          <h2 style={{ textAlign: 'center' }}>教师端登录</h2>
           <Form name="normal_login" className="login-form" onFinish={onFinish}>
             <Form.Item
               name="teacherId"
