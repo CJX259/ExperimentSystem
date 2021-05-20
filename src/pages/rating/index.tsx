@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { IRouteComponentProps, Redirect, connect } from 'umi';
-import { Space, Table, Tag, message, Tooltip, Button } from 'antd';
-import { getStudentAndExperimentByPage } from '@/services/student';
+import { Space, Table, Tag, message, Tooltip, Button, Input } from 'antd';
+import { getStudentAndExperimentByPage, uploadScore } from '@/services/student';
 interface experiment {
   id: string;
   name: string;
@@ -30,7 +30,11 @@ const index = ({ location }: IRouteComponentProps) => {
   }
   const [experiments, setExperiments] = useState([] as Array<experiment>);
   const [students, setStudents] = useState([] as Array<student>);
-  const [page, setPage] = useState({ pageSize: 5, current: 1, total: 0 });
+  const [page, setPage] = useState({ pageSize: 15, current: 1, total: 0 });
+  const [loading, setLoading] = useState(false);
+  // 筛选条件
+  const [searchValue, setSearchValue] = useState('');
+  const [searchFilters, setSearchFilters] = useState({});
   useEffect(() => {
     getStudentAndExperimentByPage(
       courseId,
@@ -67,7 +71,7 @@ const index = ({ location }: IRouteComponentProps) => {
             <Tag
               color={
                 record.gradeMap[experiment.id] == 4 ||
-                record.gradeMap[grade] == 0
+                record.gradeMap[experiment.id] == 0
                   ? 'red'
                   : 'green'
               }
@@ -91,14 +95,9 @@ const index = ({ location }: IRouteComponentProps) => {
         { text: '不及格', value: '4' },
       ],
       render(score: any, record: student) {
-        console.log(score);
         return (
           <Tag
-            color={
-              record.gradeMap[score] == 4 || record.gradeMap[score] == 0
-                ? 'red'
-                : 'green'
-            }
+            color={record.score == '4' || record.score == '0' ? 'red' : 'green'}
           >
             {gradeMap[score]}
           </Tag>
@@ -108,7 +107,6 @@ const index = ({ location }: IRouteComponentProps) => {
     {
       title: '操作',
       render(record: student) {
-        console.log(record);
         return (
           <Tooltip
             trigger="click"
@@ -121,7 +119,7 @@ const index = ({ location }: IRouteComponentProps) => {
                   return (
                     <Button
                       // 传‘1’代表优秀，是grade的1
-                      onClick={() => {}}
+                      onClick={handleScore(i + '', record)}
                       type={record.score == i + '' ? 'primary' : 'default'}
                       size="small"
                       key={grade}
@@ -141,12 +139,107 @@ const index = ({ location }: IRouteComponentProps) => {
       },
     },
   );
+  const handleScore = (score: string, student: student) => {
+    return function () {
+      if (score != student.score) {
+        setLoading(true);
+        uploadScore(courseId, student.id, score)
+          .then((data) => {
+            message.success(data.msg);
+            // 前端视图更新
+            setStudents(
+              students.map((s: student) => {
+                if (s.id === student.id) {
+                  s.score = score;
+                }
+                return s;
+              }),
+            );
+          })
+          .catch((err: Error) => {
+            message.error(err.message);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    };
+  };
+  const handleTableChange = (page: any, filters: any, sorter: any) => {
+    setLoading(true);
+    setSearchFilters(filters);
+    getStudentAndExperimentByPage(
+      courseId,
+      classUid,
+      page.pageSize,
+      page.current,
+      {
+        ...filters,
+        name: searchValue,
+      },
+    )
+      .then((data: responseData) => {
+        setPage({ ...page, total: data.count });
+        setStudents(data.students);
+        setLoading(false);
+      })
+      .catch((err) => {
+        message.error(err.message);
+        setLoading(false);
+      });
+  };
+  const handleSearchChange = (value: string) => {
+    setLoading(true);
+    getStudentAndExperimentByPage(
+      courseId,
+      classUid,
+      page.pageSize,
+      page.current,
+      {
+        ...searchFilters,
+        name: value,
+      },
+    )
+      .then((data: responseData) => {
+        setPage({
+          current: 1,
+          pageSize: page.pageSize,
+          total: data.count,
+        });
+        setStudents(data.students);
+        setLoading(false);
+      })
+      .catch((err) => {
+        message.error(err.message);
+        setLoading(false);
+      });
+  };
   return (
     <div>
+      <div style={{ overflow: 'hidden', marginBottom: '10px' }}>
+        <Input.Search
+          placeholder="搜索学生名字"
+          style={{
+            width: 'auto',
+            float: 'right',
+          }}
+          enterButton={true}
+          //两种做法
+          // 点击搜索再改searchKey
+          // 输入的时候就改searchKey
+          onChange={(e) => {
+            // 给那边筛选的时候，插入name属性
+            setSearchValue(e.target.value);
+          }}
+          onSearch={handleSearchChange}
+        ></Input.Search>
+      </div>
       <Table
         columns={columns}
-        // pagination={{ ...page, total: students.count }}
+        loading={loading}
+        pagination={{ ...page }}
         rowKey="id"
+        onChange={handleTableChange}
         dataSource={students}
       ></Table>
     </div>

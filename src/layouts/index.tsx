@@ -338,6 +338,12 @@ function isDefault(location: { pathname: string; state: any }): Array<string> {
       }
       var courseId = location.state.courseId;
       return [`sub1_${courseId}`];
+    case '/rating':
+      if (!location.state) {
+        return [];
+      }
+      var courseId = location.state.courseId;
+      return [`sub1_${courseId}`];
     default:
       return [];
   }

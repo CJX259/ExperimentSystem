@@ -520,6 +520,9 @@ export default {
               '2': 4,
               '3': 4,
               '4': 3,
+              '5': 1,
+              '6': 2,
+              '7': 3,
             },
             score: 0,
           },
@@ -541,9 +544,28 @@ export default {
             id: '4',
             name: '实验报告4',
           },
+          {
+            id: '5',
+            name: '实验报告5',
+          },
+          {
+            id: '6',
+            name: '实验报告6',
+          },
+          {
+            id: '7',
+            name: '实验报告7',
+          },
         ],
       },
       msg: '查询成功',
+    });
+  },
+  'POST /api/student/uploadscore': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: '评分成功',
     });
   },
 };

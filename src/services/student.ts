@@ -87,6 +87,31 @@ export async function uploadGrade(
     throw new Error(err.message);
   }
 }
+// 评总分
+export async function uploadScore(
+  courseId: string,
+  studentId: string,
+  score: string,
+) {
+  try {
+    const data = await request('/api/student/uploadscore', {
+      method: 'POST',
+      params: {
+        courseId,
+        studentId,
+        score,
+      },
+      skipErrorHandler: true,
+    });
+    if (data.success) {
+      return data;
+    } else {
+      throw new Error(data.msg);
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
 export async function uploadIsShow(
   experimentId: string,
   studentId: string,
@@ -113,11 +138,10 @@ export async function uploadIsShow(
 }
 export async function getStudentAndExperimentByPage(
   courseId: string,
-  classUid: String,
-  pageSize: Number,
-  current: Number,
-  name?: String,
-  score?: Number,
+  classUid: string,
+  pageSize: number,
+  current: number,
+  filters?: any,
 ) {
   try {
     const data = await request('/api/student/getstudentandexperimentbypage', {
@@ -128,8 +152,7 @@ export async function getStudentAndExperimentByPage(
         classUid,
         pageSize,
         current,
-        name,
-        score,
+        ...filters,
       },
     });
     if (data.success) {
