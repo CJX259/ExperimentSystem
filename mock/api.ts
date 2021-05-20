@@ -568,5 +568,12 @@ export default {
       msg: '评分成功',
     });
   },
+  'POST /api/message/comment': (req: any, res: any) => {
+    res.send({
+      success: true,
+      data: {},
+      msg: '评论成功',
+    });
+  },
 };
 const students = getStuData();

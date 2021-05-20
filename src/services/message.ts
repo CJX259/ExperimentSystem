@@ -27,3 +27,32 @@ export async function remindSubmit(
     throw new Error(err.message);
   }
 }
+
+export async function sendComment(
+  studentId: string,
+  experimentId: string,
+  experimentName: string,
+  courseName: string,
+  comment: string,
+) {
+  try {
+    const data = await request('/api/message/comment', {
+      method: 'POST',
+      params: {
+        studentId,
+        experimentId,
+        experimentName,
+        comment,
+        courseName,
+      },
+      skipErrorHandler: true,
+    });
+    if (data.success) {
+      return data;
+    } else {
+      throw new Error(data.msg);
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}

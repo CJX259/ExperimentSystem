@@ -41,6 +41,7 @@ const UserModel: UserModelType = {
         if (data.success) {
           // yield put({ type: 'setUser', payload: data.data });
           message.success(data.msg, 1);
+          history.push('/');
         } else {
           // 登录失败的情况
           throw new Error(data.msg);

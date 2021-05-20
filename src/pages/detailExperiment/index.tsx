@@ -22,7 +22,7 @@ import {
 } from 'antd';
 import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
 import { student, grade, experiment } from '@/type/index';
-import { remindSubmit } from '@/services/message';
+import { remindSubmit, sendComment } from '@/services/message';
 import { UserModelState } from '@/models/user';
 import styles from './index.less';
 // 因为从1开始
@@ -33,7 +33,6 @@ function DetailExperiment({
   user,
 }: IRouteComponentProps & { user: UserModelState }) {
   // 不输出，umi会自动优化，就不导入index.less了（因为没地方用到里面的属性~）
-  console.log(styles);
   let state = location.state;
   let experiment: experiment = state.experiment;
   let classUid = state.classUid;
@@ -58,6 +57,9 @@ function DetailExperiment({
   const [searchValue, setSearchValue] = useState('');
   const [searchFilters, setSearchFilters] = useState({});
   const [baseUrl, setBaseUrl] = useState('');
+  const [commentVisible, setCommentVisible] = useState(false);
+  const [commentStudent, setCommentStudent] = useState({} as student);
+  const [comment, setComment] = useState('');
   useEffect(() => {
     setLoading(true);
     getStuByClassByPage(classUid, experiment.id, page.current, page.pageSize)
@@ -133,6 +135,14 @@ function DetailExperiment({
               disabled={record.status === 0}
             >
               预览
+            </Button>
+            <Button
+              onClick={clickComment(record)}
+              style={{ fontSize: '12px' }}
+              size="small"
+              disabled={record.status === 0}
+            >
+              评语
             </Button>
             {record.status === 0 ? (
               <Button disabled style={{ fontSize: '12px' }} size="small">
@@ -220,6 +230,18 @@ function DetailExperiment({
     // selectKeysData为被选中元素的key，也就是id
     setSelectKeys(selectKeysData);
   };
+  const clickComment = (student: student) => {
+    return function () {
+      setCommentVisible(true);
+      // 当点击评语按钮时，如果是与上次点击的同一个人，则input内容保留
+      // 否则清空input内容，且重新赋值student
+      console.log(student.id, commentStudent.id);
+      if (student.id != commentStudent.id) {
+        setCommentStudent(student);
+        setComment('');
+      }
+    };
+  };
   // 处理打开预览
   const handlePreview = (student: student) => {
     return function () {
@@ -231,6 +253,8 @@ function DetailExperiment({
   const handleCancel = () => {
     setPreviewVisible(false);
     setPreviewUrl('');
+    setCommentVisible(false);
+    // setCommentStudent({} as student);
   };
   // 处理多选
   const rowSelection = {
@@ -437,6 +461,26 @@ function DetailExperiment({
       }
     };
   }
+  function handleCommentInput(e: any) {
+    setComment(e.target.value);
+  }
+  function handleCommentUpload() {
+    sendComment(
+      commentStudent.id,
+      experiment.id,
+      experiment.name,
+      courseName,
+      comment,
+    )
+      .then((data) => {
+        message.success(data.msg);
+        handleCancel();
+        setComment('');
+      })
+      .catch((err: Error) => {
+        message.error(err.message);
+      });
+  }
   return (
     <div>
       <div
@@ -534,6 +578,29 @@ function DetailExperiment({
             height={630}
           />
         ) : null}
+      </Modal>
+      <Modal
+        visible={commentVisible}
+        footer={null}
+        onCancel={handleCancel}
+        width={600}
+      >
+        <div className={styles['clear-float']}>
+          <h2>对{commentStudent.name}的评语</h2>
+          <Input.TextArea
+            style={{ minHeight: '200px' }}
+            onChange={handleCommentInput}
+            value={comment}
+          ></Input.TextArea>
+          <Button
+            type="primary"
+            onClick={handleCommentUpload}
+            style={{ float: 'right', marginTop: '10px' }}
+            // onClick={}
+          >
+            提交
+          </Button>
+        </div>
       </Modal>
     </div>
   );
