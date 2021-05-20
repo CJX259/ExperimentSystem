@@ -9,6 +9,7 @@ import {
 import {
   downloadExperiment,
   polyDownloadExperiment,
+  sendComment,
 } from '@/services/experiment';
 import {
   Table,
@@ -22,7 +23,7 @@ import {
 } from 'antd';
 import { DownloadOutlined, CloseOutlined } from '@ant-design/icons';
 import { student, grade, experiment } from '@/type/index';
-import { remindSubmit, sendComment } from '@/services/message';
+import { remindSubmit } from '@/services/message';
 import { UserModelState } from '@/models/user';
 import styles from './index.less';
 // 因为从1开始
@@ -235,10 +236,9 @@ function DetailExperiment({
       setCommentVisible(true);
       // 当点击评语按钮时，如果是与上次点击的同一个人，则input内容保留
       // 否则清空input内容，且重新赋值student
-      console.log(student.id, commentStudent.id);
       if (student.id != commentStudent.id) {
         setCommentStudent(student);
-        setComment('');
+        setComment(student.comment);
       }
     };
   };
@@ -465,17 +465,22 @@ function DetailExperiment({
     setComment(e.target.value);
   }
   function handleCommentUpload() {
-    sendComment(
-      commentStudent.id,
-      experiment.id,
-      experiment.name,
-      courseName,
-      comment,
-    )
+    sendComment(commentStudent.id, experiment.id, comment)
       .then((data) => {
         message.success(data.msg);
         handleCancel();
-        setComment('');
+        // 成功之后，要在前端更新对应student中的comment数据
+        setStudents({
+          count: students.count,
+          students: students.students.map((s: student) => {
+            if (s.id === commentStudent.id) {
+              // s.isShow = s.isShow ? 0 : 1;
+              s.comment = comment;
+            }
+            return s;
+          }) as never,
+        });
+        // setComment('');
       })
       .catch((err: Error) => {
         message.error(err.message);

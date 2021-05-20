@@ -3,7 +3,7 @@ import { IRouteComponentProps, Redirect, connect } from 'umi';
 import { Space, Table, Tag, message, Tooltip, Button, Input } from 'antd';
 import { getStudentAndExperimentByPage, uploadScore } from '@/services/student';
 interface experiment {
-  id: string;
+  experimentId: string;
   name: string;
 }
 interface student {
@@ -30,7 +30,7 @@ const index = ({ location }: IRouteComponentProps) => {
   }
   const [experiments, setExperiments] = useState([] as Array<experiment>);
   const [students, setStudents] = useState([] as Array<student>);
-  const [page, setPage] = useState({ pageSize: 15, current: 1, total: 0 });
+  const [page, setPage] = useState({ pageSize: 5, current: 1, total: 0 });
   const [loading, setLoading] = useState(false);
   // 筛选条件
   const [searchValue, setSearchValue] = useState('');
@@ -44,8 +44,8 @@ const index = ({ location }: IRouteComponentProps) => {
     )
       .then((data: responseData) => {
         setPage({ ...page, total: data.count });
-        setStudents(data.students);
-        setExperiments(data.experiments);
+        setStudents(data.students ? data.students : []);
+        setExperiments(data.experiments ? data.experiments : []);
       })
       .catch((err: Error) => {
         message.error(err.message);
@@ -64,19 +64,21 @@ const index = ({ location }: IRouteComponentProps) => {
     experiments.forEach((experiment: experiment, index: number) => {
       columns.push({
         title: experiment.name,
-        dataIndex: students.length > 0 ? experiments[0].id : 'eid' + index,
-        key: students.length > 0 ? experiments[0].id : 'eid' + index,
+        dataIndex:
+          students.length > 0 ? experiments[0].experimentId : 'eid' + index,
+        key: students.length > 0 ? experiments[0].experimentId : 'eid' + index,
         render(grade: any, record: student) {
+          console.log(gradeMap[record.gradeMap[experiment.experimentId]]);
           return (
             <Tag
               color={
-                record.gradeMap[experiment.id] == 4 ||
-                record.gradeMap[experiment.id] == 0
+                record.gradeMap[experiment.experimentId] == 4 ||
+                record.gradeMap[experiment.experimentId] == 0
                   ? 'red'
                   : 'green'
               }
             >
-              {gradeMap[record.gradeMap[experiment.id]]}
+              {gradeMap[record.gradeMap[experiment.experimentId]]}
             </Tag>
           );
         },

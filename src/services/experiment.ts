@@ -143,3 +143,28 @@ export async function polyDownloadExperiment(
     throw new Error(err);
   }
 }
+
+export async function sendComment(
+  studentId: string,
+  experimentId: string,
+  comment: string,
+) {
+  try {
+    const data = await request('/api/experiment/comment', {
+      method: 'POST',
+      params: {
+        studentId,
+        experimentId,
+        comment,
+      },
+      skipErrorHandler: true,
+    });
+    if (data.success) {
+      return data;
+    } else {
+      throw new Error(data.msg);
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}

@@ -35,4 +35,5 @@ export interface student {
   isShow: number;
   status: number;
   experPath: string;
+  comment: string;
 }
