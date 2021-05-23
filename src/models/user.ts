@@ -1,5 +1,6 @@
 import { history, Effect, Reducer, request } from 'umi';
 import { message } from 'antd';
+import { publicPath } from '../type/index';
 import { delCookie } from '@/utils';
 // state类型接口
 export interface UserModelState {
@@ -66,7 +67,7 @@ const UserModel: UserModelType = {
         }
       } catch (err) {
         message.error(err.message);
-        history.push('/login');
+        history.push('/login1');
       }
     },
     *logout(action, { call, put }) {
@@ -74,7 +75,7 @@ const UserModel: UserModelType = {
       yield put({ type: 'setUser', payload: {} });
       // 删除原来的cookie
       delCookie('userToken');
-      history.push('/login');
+      history.push('/login1');
     },
   },
   // dispatch这里reducers的函数名即可触发对应函数
@@ -97,7 +98,7 @@ const UserModel: UserModelType = {
 };
 
 async function requestLogin(teacherId: string, password: string) {
-  const data = await request('/api/teacher/login', {
+  const data = await request(`${publicPath}api/teacher/login`, {
     method: 'post',
     params: {
       teacherId,
@@ -108,7 +109,7 @@ async function requestLogin(teacherId: string, password: string) {
   return data;
 }
 async function requestLoginByCookie() {
-  const data = await request('/api/teacher/loginbycookie', {
+  const data = await request(`${publicPath}api/teacher/loginbycookie`, {
     method: 'get',
     skipErrorHandler: true,
   });

@@ -53,7 +53,7 @@ const PageLayout: React.FC<PageLayout> = ({
   announcement: AnnouncementModelState;
 }) => {
   // 登录则不要渲染
-  if (location.pathname === '/login') {
+  if (location.pathname === '/login1') {
     return <div>{children}</div>;
   }
   useEffect(() => {
@@ -90,6 +90,9 @@ const PageLayout: React.FC<PageLayout> = ({
       }
     }
   };
+  if (!user.name) {
+    return null;
+  }
   return (
     <div className="layout">
       <Spin spinning={loading.models.course}>

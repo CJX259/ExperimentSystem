@@ -1,6 +1,7 @@
 import { request } from 'umi';
-import { experiment } from '@/type';
+// import { experiment } from '@/type';
 // 分页拿到某个班的学生(需传exp信息，拿到finish表内容拼接)
+import { publicPath } from '../type/index';
 export async function getStuByClassByPage(
   classUid: string,
   experimentId: string,
@@ -18,7 +19,7 @@ export async function getStuByClassByPage(
     }
   }
   try {
-    const data = await request('/api/student/getstudatabypage', {
+    const data = await request(`${publicPath}api/student/getstudatabypage`, {
       method: 'GET',
       params: {
         experimentId,
@@ -44,7 +45,7 @@ export async function changePermit(
   com_permit: number,
 ) {
   try {
-    const data = await request('/api/student/changepermit', {
+    const data = await request(`${publicPath}api/student/changepermit`, {
       method: 'POST',
       params: {
         experimentId,
@@ -69,7 +70,7 @@ export async function uploadGrade(
   grade: string,
 ) {
   try {
-    const data = await request('/api/student/uploadgrade', {
+    const data = await request(`${publicPath}api/student/uploadgrade`, {
       method: 'POST',
       params: {
         experimentId,
@@ -94,7 +95,7 @@ export async function uploadScore(
   score: string,
 ) {
   try {
-    const data = await request('/api/student/uploadscore', {
+    const data = await request(`${publicPath}api/student/uploadscore`, {
       method: 'POST',
       params: {
         courseId,
@@ -118,7 +119,7 @@ export async function uploadIsShow(
   isShow: number,
 ) {
   try {
-    const data = await request('/api/student/uploadisshow', {
+    const data = await request(`${publicPath}api/student/uploadisshow`, {
       method: 'POST',
       params: {
         experimentId,
@@ -143,18 +144,30 @@ export async function getStudentAndExperimentByPage(
   current: number,
   filters?: any,
 ) {
+  var newFilter: any = {};
+  for (const key in filters) {
+    if (Object.prototype.hasOwnProperty.call(filters, key)) {
+      const filter = filters[key];
+      if (filter) {
+        newFilter[key] = filter;
+      }
+    }
+  }
   try {
-    const data = await request('/api/student/getstudentandexperimentbypage', {
-      skipErrorHandler: true,
-      method: 'GET',
-      params: {
-        courseId,
-        classUid,
-        pageSize,
-        current,
-        ...filters,
+    const data = await request(
+      `${publicPath}api/student/getstudentandexperimentbypage`,
+      {
+        skipErrorHandler: true,
+        method: 'GET',
+        params: {
+          courseId,
+          classUid,
+          pageSize,
+          current,
+          ...newFilter,
+        },
       },
-    });
+    );
     if (data.success) {
       return data.data;
     } else {

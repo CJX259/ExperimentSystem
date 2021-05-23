@@ -37,3 +37,5 @@ export interface student {
   experPath: string;
   comment: string;
 }
+export const publicPath = '/';
+// export const publicPath = '/project_one/';

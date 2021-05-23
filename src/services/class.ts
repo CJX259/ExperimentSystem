@@ -1,8 +1,9 @@
 import { request } from 'umi';
+import { publicPath } from '../type/index';
 // 通过学院id，拿到该学院的所有班级
 export async function getAllClass() {
   try {
-    const data = await request('/api/class/getallclass', {
+    const data = await request(`${publicPath}api/class/getallclass`, {
       method: 'GET',
       skipErrorHandler: true,
     });
@@ -19,7 +20,7 @@ export async function getAllClass() {
 }
 export async function getClassByCourseId(courseId: string) {
   try {
-    const data = await request('/api/class/getclassbycourseid', {
+    const data = await request(`${publicPath}api/class/getclassbycourseid`, {
       method: 'GET',
       skipErrorHandler: true,
       params: {

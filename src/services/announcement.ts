@@ -1,10 +1,14 @@
 import { request } from 'umi';
+import { publicPath } from '../type/index';
 export async function getAnnouncement() {
   try {
-    const data = await request('/api/announcement/getannouncement', {
-      method: 'GET',
-      skipErrorHandler: true,
-    });
+    const data = await request(
+      `${publicPath}api/announcement/getannouncement`,
+      {
+        method: 'GET',
+        skipErrorHandler: true,
+      },
+    );
     if (data.success) {
       return data;
     } else {

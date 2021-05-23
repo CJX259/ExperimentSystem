@@ -1,7 +1,8 @@
 import { request } from 'umi';
+import { publicPath } from '../type/index';
 export async function getCoursesByTeacher() {
   try {
-    const data = await request('/api/course/getcoursesbyteacher', {
+    const data = await request(`${publicPath}api/course/getcoursesbyteacher`, {
       method: 'GET',
       skipErrorHandler: true,
     });
@@ -20,7 +21,7 @@ export async function getCoursesByTeacher() {
 // 通过学院id，然后返回该学院的课程
 export async function getCoursesByCollege() {
   try {
-    const data = await request('/api/course/getcourses', {
+    const data = await request(`${publicPath}api/course/getcourses`, {
       method: 'GET',
     });
     if (data.success) {
@@ -35,7 +36,7 @@ export async function getCoursesByCollege() {
 // 添加老师教课信息
 export async function addCourse(values: any) {
   try {
-    const data = await request('/api/course/addcourse', {
+    const data = await request(`${publicPath}api/course/addcourse`, {
       method: 'POST',
       params: values,
       skipErrorHandler: true,

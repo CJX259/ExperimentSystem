@@ -1,9 +1,10 @@
 import { message } from 'antd';
 import { request } from 'umi';
+import { publicPath } from '../type/index';
 
 export async function getExperiment(courseId: string, classUid: string) {
   try {
-    const data = await request('/api/experiment/getexperiments', {
+    const data = await request(`${publicPath}api/experiment/getexperiments`, {
       method: 'GET',
       skipErrorHandler: true,
       params: {
@@ -26,7 +27,7 @@ export async function getExperiment(courseId: string, classUid: string) {
 
 export async function delExperiment(id: string) {
   try {
-    const data = await request('/api/experiment/delexperiment', {
+    const data = await request(`${publicPath}api/experiment/delexperiment`, {
       method: 'POST',
       skipErrorHandler: true,
       params: {
@@ -53,7 +54,7 @@ export async function addExperiment(
   deadline: string,
 ) {
   try {
-    const data = await request('/api/experiment/addexperiment', {
+    const data = await request(`${publicPath}api/experiment/addexperiment`, {
       method: 'POST',
       skipErrorHandler: true,
       params: {
@@ -83,7 +84,7 @@ export async function updateExperiment(
   submitted: number,
 ) {
   try {
-    const data = await request('/api/experiment/updateexperiment', {
+    const data = await request(`${publicPath}api/experiment/updateexperiment`, {
       method: 'POST',
       skipErrorHandler: true,
       params: {
@@ -114,7 +115,7 @@ export async function downloadExperiment(
     const a = document.createElement('a');
     a.setAttribute(
       'href',
-      `/api/experiment/download?&studentId=${studentId}&experimentId=${experimentId}`,
+      `${publicPath}api/experiment/download?&studentId=${studentId}&experimentId=${experimentId}`,
     );
     a.click();
   } catch (err) {
@@ -130,7 +131,7 @@ export async function polyDownloadExperiment(
 ) {
   try {
     const a = document.createElement('a');
-    let url = `/api/experiment/polydownload?experimentId=${experimentId}&experimentName=${experimentName}&className=${className}`;
+    let url = `${publicPath}api/experiment/polydownload?experimentId=${experimentId}&experimentName=${experimentName}&className=${className}`;
     // 传了studentId就拼接，只下载那些，不传则下载全部
     if (studentsId) {
       studentsId.forEach((id: string) => {
@@ -150,7 +151,7 @@ export async function sendComment(
   comment: string,
 ) {
   try {
-    const data = await request('/api/experiment/comment', {
+    const data = await request(`${publicPath}api/experiment/comment`, {
       method: 'POST',
       params: {
         studentId,

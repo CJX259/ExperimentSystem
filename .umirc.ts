@@ -1,5 +1,5 @@
 import { defineConfig } from 'umi';
-
+// import { publicPath } from './src/type/index';
 export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
@@ -16,6 +16,7 @@ export default defineConfig({
     // href的图片你可以放在public里面，直接./图片名.png 就可以了，也可以是cdn链接
     { rel: 'icon', href: './校徽.jpg' },
   ],
+  // publicPath,
   routes: [
     {
       exact: false,
@@ -30,7 +31,7 @@ export default defineConfig({
           //   '@/wrappers/haveLogin',
           // ],
         },
-        { exact: true, path: '/login', component: '@/pages/login' },
+        { exact: true, path: '/login1', component: '@/pages/login' },
         { exact: true, path: '/addcourse', component: '@/pages/addCourse' },
         {
           exact: true,

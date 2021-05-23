@@ -1,6 +1,7 @@
 import { request } from 'umi';
 // 通过experimentId和classUid中的所有stuId，拿到finish表的数据，拿到提交状态，筛选出未提交的学生
 // 给未提交的学生发送信息（插入信息到message表中）
+import { publicPath } from '../type/index';
 export async function remindSubmit(
   teacherId: string,
   classUid: string,
@@ -8,7 +9,7 @@ export async function remindSubmit(
   courseName: string,
 ) {
   try {
-    const data = await request('/api/message/remindsubmit', {
+    const data = await request(`${publicPath}api/message/remindsubmit`, {
       method: 'POST',
       params: {
         teacherId,
